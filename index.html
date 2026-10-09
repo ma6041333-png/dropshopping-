@@ -11,7 +11,8 @@
         .product-card { transition: all 0.2s ease; }
         .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
         .logo-opacity { opacity: 0.5; }
-        /* تأثير شاشة التحميل (مثل نون وأمازون) */
+        
+        <!-- شاشة التحميل -->
         #loading-overlay {
             position: fixed; inset: 0; background: rgba(19, 25, 33, 0.85); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;
@@ -20,23 +21,41 @@
         #loading-overlay.active { opacity: 1; pointer-events: auto; }
         .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #febd69; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        <!-- تصميم إشعار "تمت الإضافة" الفخم -->
+        #toast-notification {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #131921; color: #febd69; border: 1px solid rgba(254, 189, 105, 0.3);
+            padding: 10px 20px; border-radius: 30px; font-weight: bold; font-size: 13px; z-index: 10000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); transition: transform 0.3s ease, opacity 0.3s ease; opacity: 0;
+        }
+        #toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
 <body class="bg-[#eaeded] text-gray-900 flex flex-col min-h-screen">
 
-    <!-- شاشة التحميل الوهمية لتشبه أمازون ونون -->
+    <!-- شاشة التحميل -->
     <div id="loading-overlay">
         <div class="spinner mb-3"></div>
         <p class="text-sm font-bold text-amber-400">جاري المعالجة والانتقال...</p>
     </div>
 
-    <!-- شريط أمازون العلوي الرئيسي -->
+    <!-- إشعار تمت الإضافة بنجاح -->
+    <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
+
+    <!-- شريط أمازون العلوي الرئيسي (يحتوي على زر القائمة الثلاث شرط) -->
     <header class="bg-[#131921] text-white sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             
-            <div class="flex items-center gap-2.5 cursor-pointer" onclick="triggerLoading(goHome)">
-                <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=100" alt="Logo" class="w-9 h-9 object-cover rounded-full logo-opacity border border-amber-500/50">
-                <span class="text-lg sm:text-xl font-black tracking-wider uppercase text-amber-400">DROP <span class="text-white">SHOPPING</span></span>
+            <div class="flex items-center gap-3">
+                <!-- زر القائمة (الثلاث شرط) -->
+                <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1">
+                    ☰
+                </button>
+                <div class="flex items-center gap-2.5 cursor-pointer" onclick="triggerLoading(goHome)">
+                    <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=100" alt="Logo" class="w-9 h-9 object-cover rounded-full logo-opacity border border-amber-500/50">
+                    <span class="text-lg sm:text-xl font-black tracking-wider uppercase text-amber-400">DROP <span class="text-white">SHOPPING</span></span>
+                </div>
             </div>
 
             <div class="flex items-center gap-3">
@@ -48,15 +67,26 @@
         </div>
     </header>
 
-    <!-- شريط التصنيفات -->
-    <nav class="bg-[#232f3e] text-white text-xs sm:text-sm px-4 py-2 flex items-center gap-4 overflow-x-auto whitespace-nowrap shadow-inner">
-        <button onclick="triggerLoading(() => { goHome(); filterCategory('all'); })" class="hover:text-[#febd69] font-bold transition">📋 الرئيسية وكل المنتجات</button>
-        <button onclick="triggerLoading(() => { goHome(); filterCategory('ملابس'); })" class="hover:text-[#febd69] font-bold transition">👕 قسم الملابس</button>
-        <button onclick="triggerLoading(() => { goHome(); filterCategory('إكسسوارات'); })" class="hover:text-[#febd69] font-bold transition">⌚ قسم الإكسسوارات</button>
-        <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="text-amber-400 hover:underline font-bold mr-auto">📘 تابعنا على فيسبوك</a>
-    </nav>
+    <!-- القائمة الجانبية (الثلاث شرط) -->
+    <div id="side-menu" class="fixed inset-y-0 right-0 bg-[#131921] text-white w-72 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between p-5 border-l border-gray-800">
+        <div>
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
+                <h2 class="font-black text-base text-amber-400">قائمة المتجر</h2>
+                <button onclick="toggleMenu()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
+            </div>
+            <nav class="space-y-2 font-bold text-xs sm:text-sm">
+                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('all'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-gray-800 hover:text-amber-400 transition">📋 الرئيسية وكل المنتجات</button>
+                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('ملابس'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-gray-800 hover:text-amber-400 transition">👕 قسم الملابس</button>
+                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('إكسسوارات'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-gray-800 hover:text-amber-400 transition">⌚ قسم الإكسسوارات</button>
+                <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="block py-2.5 px-3 rounded-lg text-amber-400 hover:bg-gray-800 transition">📘 تابعنا على فيسبوك</a>
+            </nav>
+        </div>
+        <div class="text-[11px] text-center text-gray-500 border-t border-gray-800 pt-3">
+            DROP SHOPPING © 2026
+        </div>
+    </div>
 
-    <!-- لوحة الإعدادات والتحكم للآدمن (مخفية) -->
+    <!-- لوحة التحكم للآدمن (مخفية) -->
     <div id="admin-panel" class="hidden bg-[#131921] text-white p-6 shadow-xl border-b border-gray-800">
         <div class="max-w-4xl mx-auto">
             <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
@@ -107,7 +137,6 @@
     <!-- واجهة المنتجات الرئيسية -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
         
-        <!-- محرك البحث (في الرئيسية فقط) -->
         <div id="home-search-section" class="mb-6 max-w-xl mx-auto">
             <div class="flex shadow-sm">
                 <input type="text" id="search-input" oninput="searchProducts()" placeholder="ابحث عن منتجك المفضلة هنا..." class="w-full py-2.5 px-4 rounded-r-lg bg-white border border-gray-300 text-sm focus:outline-none focus:border-blue-500">
@@ -157,7 +186,7 @@
         </div>
     </div>
 
-    <!-- نافذة السلة وإتمام الطلب -->
+    <!-- نافذة السلة وإتمام الطلب (مع عداد الكمية + و -) -->
     <div id="cart-modal" class="fixed inset-0 bg-black/60 hidden z-50 flex justify-end">
         <div class="bg-white text-gray-900 w-full max-w-md h-full p-5 flex flex-col justify-between shadow-2xl overflow-y-auto">
             <div>
@@ -219,14 +248,28 @@
 
         renderStore();
 
-        // دالة محاكاة تأثير التحميل السلس (مثل أمازون ونون)
         function triggerLoading(action) {
             const overlay = document.getElementById('loading-overlay');
             if (overlay) overlay.classList.add('active');
             setTimeout(() => {
                 if (typeof action === 'function') action();
                 if (overlay) overlay.classList.remove('active');
-            }, 400); // مدة التحميل نصف ثانية لتعطي إيحاء واقعي وسريع
+            }, 400);
+        }
+
+        // فتح وإغلاق القائمة الجانبية (الثلاث شرط)
+        function toggleMenu() {
+            const menu = document.getElementById('side-menu');
+            if (menu) menu.classList.toggle('translate-x-full');
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast-notification');
+            if (!toast) return;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
         }
 
         function saveProducts() {
@@ -432,24 +475,50 @@
         function addToCart(id) {
             const product = products.find(p => p.id === id);
             if (product) {
-                cart.push(product);
+                const existing = cart.find(item => item.product.id === id);
+                if (existing) {
+                    existing.quantity += 1;
+                } else {
+                    cart.push({ product: product, quantity: 1 });
+                }
                 updateCartUI();
-                alert('تمت إضافة المنتج إلى السلة بنجاح!');
+                showToast();
             }
         }
 
         function buyNow(id) {
             const product = products.find(p => p.id === id);
             if (product) {
-                cart = [product]; // وضعه وحده في السلة للشراء الفوري
+                const existing = cart.find(item => item.product.id === id);
+                if (existing) {
+                    existing.quantity += 1;
+                } else {
+                    cart.push({ product: product, quantity: 1 });
+                }
                 updateCartUI();
                 openCart();
             }
         }
 
+        function increaseQty(index) {
+            cart[index].quantity += 1;
+            updateCartUI();
+        }
+
+        function decreaseQty(index) {
+            if (cart[index].quantity > 1) {
+                cart[index].quantity -= 1;
+            } else {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
         function updateCartUI() {
+            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             const countEl = document.getElementById('cart-count');
-            if (countEl) countEl.innerText = cart.length;
+            if (countEl) countEl.innerText = totalCount;
+
             const itemsContainer = document.getElementById('cart-items');
             if (!itemsContainer) return;
             itemsContainer.innerHTML = '';
@@ -462,17 +531,23 @@
             }
 
             cart.forEach((item, index) => {
-                total += item.price;
+                let itemTotal = item.product.price * item.quantity;
+                total += itemTotal;
                 itemsContainer.innerHTML += `
-                    <div class="flex justify-between items-center border-b pb-2 text-gray-800 text-xs">
+                    <div class="flex justify-between items-center border-b pb-2.5 text-gray-800 text-xs gap-2">
                         <div class="flex items-center gap-2">
-                            <img src="${item.image1 || ''}" class="w-10 h-10 rounded object-contain bg-gray-50 border">
+                            <img src="${item.product.image1 || ''}" class="w-10 h-10 rounded object-contain bg-gray-50 border">
                             <div>
-                                <p class="font-bold">${item.name || ''}</p>
-                                <p class="text-red-700 font-bold">${item.price || 0} ج.م</p>
+                                <p class="font-bold">${item.product.name || ''}</p>
+                                <p class="text-red-700 font-bold">${item.product.price} ج.م × ${item.quantity}</p>
                             </div>
                         </div>
-                        <button onclick="triggerLoading(() => removeFromCart(${index}))" class="text-red-500 font-bold hover:underline">حذف</button>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="decreaseQty(${index})" class="bg-gray-200 hover:bg-gray-300 w-6 h-6 rounded font-black text-xs flex items-center justify-center">-</button>
+                            <span class="font-bold text-xs w-4 text-center">${item.quantity}</span>
+                            <button onclick="increaseQty(${index})" class="bg-gray-200 hover:bg-gray-300 w-6 h-6 rounded font-black text-xs flex items-center justify-center">+</button>
+                            <button onclick="removeFromCart(${index})" class="text-red-500 font-bold ml-1 hover:underline text-[10px]">حذف</button>
+                        </div>
                     </div>
                 `;
             });
@@ -517,8 +592,9 @@
 
             let total = 0;
             cart.forEach((item, index) => {
-                message += `${index + 1}. ${item.name} - ${item.price} ج.م\n`;
-                total += item.price;
+                let itemTotal = item.product.price * item.quantity;
+                message += `${index + 1}. ${item.product.name} (العدد: ${item.quantity}) - ${itemTotal} ج.م\n`;
+                total += itemTotal;
             });
             message += `\n💰 *الإجمالي الكلي:* ${total} ج.م`;
             
