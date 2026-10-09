@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دروب شوبينج - المتجر الإلكتروني الاحترافي</title>
+    <title>DROP SHOPPING - المتجر الإلكتروني الاحترافي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -23,7 +23,7 @@
                 ☰
             </button>
 
-            <h1 class="text-xl font-black text-gray-900 tracking-wide">دروب <span class="text-indigo-600">شوبينج</span></h1>
+            <h1 class="text-xl font-black text-gray-900 tracking-wider">DROP <span class="text-indigo-600">SHOPPING</span></h1>
 
             <div class="flex items-center gap-3">
                 <button onclick="openCart()" class="relative bg-indigo-50 text-indigo-600 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1">
@@ -48,11 +48,11 @@
             </nav>
         </div>
         <div class="text-xs text-center text-gray-400 border-t pt-4">
-            دروب شوبينج © 2026
+            DROP SHOPPING © 2026
         </div>
     </div>
 
-    <!-- لوحة الإعدادات والتحكم الخاصة بالأدمن (تفتح بالباسورد 1695) -->
+    <!-- لوحة الإعدادات والتحكم (تفتح بالباسورد 1695) -->
     <div id="admin-panel" class="hidden bg-gray-900 text-white p-6 shadow-2xl border-b border-gray-800">
         <div class="max-w-4xl mx-auto">
             <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-3">
@@ -60,25 +60,35 @@
                 <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1.5 rounded-lg text-xs hover:bg-red-500 font-bold">إغلاق الإعدادات 🔒</button>
             </div>
 
-            <!-- تعديل شكل الموقع -->
+            <!-- تعديل وتغيير تصميم الموقع بالكامل -->
             <div class="mb-6 bg-gray-800 p-4 rounded-xl border border-gray-700">
-                <h3 class="text-sm font-bold text-indigo-300 mb-3">🎨 تعديل شكل وتصميم الموقع:</h3>
+                <h3 class="text-sm font-bold text-indigo-300 mb-3">🎨 تخصيص وتغيير ديزاين الموقع بالكامل:</h3>
                 <div class="flex flex-wrap gap-3">
-                    <button onclick="changeTheme('light')" class="bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg text-xs font-bold">مظهر فاتح</button>
-                    <button onclick="changeTheme('dark')" class="bg-black text-white px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-700">مظهر داكن</button>
-                    <button onclick="changeTheme('indigo')" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">مظهر ملكي</button>
+                    <button onclick="changeDesign('modern')" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">ديزاين عصري فخم</button>
+                    <button onclick="changeDesign('luxury')" class="bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">ديزاين ذهبي ملكي</button>
+                    <button onclick="changeDesign('minimal')" class="bg-gray-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold">ديزاين هادئ بسيط</button>
                 </div>
             </div>
 
-            <!-- أزرار الإعدادات والتحكم بالمنتجات -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                <input type="text" id="new-name" placeholder="اسم المنتج" class="p-2.5 rounded-xl bg-gray-800 border border-gray-700 text-sm">
-                <input type="number" id="new-price" placeholder="السعر (ج.م)" class="p-2.5 rounded-xl bg-gray-800 border border-gray-700 text-sm">
-                <input type="text" id="new-image" placeholder="رابط صورة المنتج" class="p-2.5 rounded-xl bg-gray-800 border border-gray-700 text-sm">
-            </div>
-            
-            <div class="flex flex-wrap gap-3 mb-6">
-                <button onclick="addProduct()" class="flex-1 bg-indigo-600 text-white py-2.5 rounded-xl font-bold hover:bg-indigo-500 transition shadow-lg text-sm">➕ إضافة منتج</button>
+            <!-- نموذج إضافة منتج (مع رفع صورتين من الموبايل) -->
+            <div class="mb-6 bg-gray-800 p-4 rounded-xl border border-gray-700">
+                <h3 class="text-sm font-bold text-indigo-300 mb-3">➕ إضافة منتج جديد (بصورتين من استوديو الهاتف):</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <input type="text" id="new-name" placeholder="اسم المنتج" class="p-2.5 rounded-xl bg-gray-900 border border-gray-700 text-sm">
+                    <input type="number" id="new-price" placeholder="السعر (ج.م)" class="p-2.5 rounded-xl bg-gray-900 border border-gray-700 text-sm">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">الصورة الأساسية:</label>
+                        <input type="file" id="image1-file" accept="image/*" class="w-full p-2 rounded-xl bg-gray-900 border border-gray-700 text-xs text-gray-300">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">الصورة الإضافية:</label>
+                        <input type="file" id="image2-file" accept="image/*" class="w-full p-2 rounded-xl bg-gray-900 border border-gray-700 text-xs text-gray-300">
+                    </div>
+                </div>
+                <textarea id="new-desc" placeholder="تفاصيل المنتج (الوصف، الخامات، المقاسات...)" class="w-full p-2.5 rounded-xl bg-gray-900 border border-gray-700 text-sm mb-3"></textarea>
+                <button onclick="addProduct()" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-bold hover:bg-indigo-500 transition shadow-lg text-sm">حفظ ونشر المنتج 🚀</button>
             </div>
             
             <h3 class="text-sm font-bold text-indigo-300 mb-3">📋 إدارة وحذف أو تعديل المنتجات الحالية:</h3>
@@ -86,7 +96,7 @@
                 <table class="w-full text-right text-sm">
                     <thead>
                         <tr class="border-b border-gray-800 text-gray-400">
-                            <th class="py-2">اسم المنتج</th>
+                            <th class="py-2">المنتج</th>
                             <th class="py-2">السعر</th>
                             <th class="py-2">الإجراء (تعديل / حذف)</th>
                         </tr>
@@ -99,19 +109,19 @@
         </div>
     </div>
 
-    <!-- الواجهة الرئيسية -->
-    <section id="home" class="bg-indigo-900 text-white py-12 px-4 text-center mb-8 shadow-inner">
+    <!-- الواجهة الرئيسية للموقع -->
+    <section id="hero-section" class="bg-indigo-900 text-white py-14 px-4 text-center mb-8 shadow-inner transition-all duration-500">
         <div class="max-w-3xl mx-auto">
-            <h2 class="text-3xl sm:text-4xl font-black mb-3">أهلاً بك في متجر دروب شوبينج</h2>
-            <p class="text-indigo-200 text-sm sm:text-base mb-6">تسوق الآن أفضل المنتجات العصرية بأعلى جودة وأسعار مميزة.</p>
-            <span class="inline-block bg-white/10 text-indigo-100 px-4 py-1.5 rounded-full text-xs font-medium border border-white/20">شحن سريع لجميع المحافظات 🚚</span>
+            <h2 id="hero-title" class="text-3xl sm:text-5xl font-black mb-4 tracking-wide">أهلاً بك في DROP SHOPPING</h2>
+            <p id="hero-subtitle" class="text-indigo-200 text-sm sm:text-base mb-6">تسوق أحدث المنتجات والترندات العالمية بجودة عالية وأسعار منافسة.</p>
+            <span id="hero-badge" class="inline-block bg-white/10 text-indigo-100 px-4 py-1.5 rounded-full text-xs font-medium border border-white/20">شحن سريع ومضمون 🚚</span>
         </div>
     </section>
 
     <!-- قسم المنتجات -->
     <main id="products-section" class="max-w-7xl mx-auto px-4 py-4 flex-grow w-full mb-12">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-xl font-black border-r-4 border-indigo-600 pr-3">قائمة المنتجات</h3>
+            <h3 class="text-xl font-black border-r-4 border-indigo-600 pr-3">قائمة المنتجات المتاحة</h3>
             <span id="products-count" class="text-xs font-bold bg-gray-200 text-gray-700 px-2.5 py-1 rounded-full">0 منتجات</span>
         </div>
 
@@ -119,6 +129,32 @@
             <!-- المنتجات -->
         </div>
     </main>
+
+    <!-- نافذة تفاصيل المنتج (تفتح عند الضغط على المنتج) -->
+    <div id="product-modal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 id="modal-title" class="font-black text-lg text-gray-900">تفاصيل المنتج</h3>
+                <button onclick="closeProductModal()" class="text-gray-400 font-bold text-xl">✕</button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4">
+                <!-- عرض الصورتين للمنتج -->
+                <div class="grid grid-cols-2 gap-3">
+                    <img id="modal-img1" src="" class="w-full h-44 object-cover rounded-xl border">
+                    <img id="modal-img2" src="" class="w-full h-44 object-cover rounded-xl border">
+                </div>
+                <div>
+                    <h4 id="modal-name" class="font-bold text-xl text-gray-900 mb-1"></h4>
+                    <p id="modal-price" class="text-indigo-600 font-black text-lg mb-3"></p>
+                    <p class="text-xs text-gray-500 font-bold mb-1">وصف وتفاصيل المنتج:</p>
+                    <p id="modal-desc" class="text-sm text-gray-700 bg-gray-50 p-3 rounded-xl border"></p>
+                </div>
+            </div>
+            <div class="p-4 border-t bg-gray-50 flex gap-3">
+                <button id="modal-add-btn" onclick="" class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold hover:bg-indigo-600 transition text-sm">إضافة لطلباتك 🛒</button>
+            </div>
+        </div>
+    </div>
 
     <!-- قائمة طلباتك (السلة) -->
     <div id="cart-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex justify-end">
@@ -144,28 +180,23 @@
 
     <!-- فوتر الموقع -->
     <footer class="bg-white border-t py-6 text-center text-xs text-gray-500">
-        <p>جميع الحقوق محفوظة © دروب شوبينج 2026</p>
+        <p>جميع الحقوق محفوظة © DROP SHOPPING 2026</p>
     </footer>
 
     <script>
-        // الباسورد الخاص بالإعدادات
         const ADMIN_PASSWORD = "1695";
-        
-        // رقم الواتساب لاستقبال الطلبات
         const WHATSAPP_PHONE = "201550795100";
 
         let defaultProducts = [
-            { id: 1, name: "تيشيرت أوفر سايز قطن فخم", price: 450, image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500" },
-            { id: 2, name: "جاكيت جينز كلاسيكي أزرق", price: 1200, image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=500" },
-            { id: 3, name: "بنطلون جينز واسع ستايل عصري", price: 650, image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500" },
-            { id: 4, name: "هودي شتوي مبطن أسود أنيق", price: 850, image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=500" }
+            { id: 1, name: "تيشيرت أوفر سايز قطن فخم", price: 450, image1: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500", image2: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500", desc: "تيشيرت عالي الجودة مصنوع من القطن الخالص 100%، مريح جداً وعصري." },
+            { id: 2, name: "جاكيت جينز كلاسيكي أزرق", price: 1200, image1: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=500", image2: "https://images.unsplash.com/photo-1543076447-215ad9ba6923?w=500", desc: "جاكيت جينز بتصميم كلاسيكي أنيق يناسب كل الأوقات والمناسبات." }
         ];
 
         let products = JSON.parse(localStorage.getItem('drop_store_products')) || defaultProducts;
         let cart = [];
-        let currentTheme = localStorage.getItem('drop_theme') || 'light';
+        let currentDesign = localStorage.getItem('drop_design') || 'modern';
 
-        applyTheme(currentTheme);
+        applyDesign(currentDesign);
 
         function saveProducts() {
             localStorage.setItem('drop_store_products', JSON.stringify(products));
@@ -183,21 +214,40 @@
             
             products.forEach(p => {
                 grid.innerHTML += `
-                    <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between">
+                    <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col justify-between cursor-pointer" onclick="openProductModal(${p.id})">
                         <div class="relative overflow-hidden h-52 bg-gray-100">
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">
+                            <img src="${p.image1}" alt="${p.name}" class="w-full h-full object-cover">
                         </div>
                         <div class="p-4 flex flex-col flex-grow justify-between">
                             <div>
                                 <h4 class="font-bold text-gray-900 mb-1 text-sm sm:text-base line-clamp-1">${p.name}</h4>
-                                <p class="text-indigo-600 font-black text-base sm:text-lg mb-4">${p.price} ج.م</p>
+                                <p class="text-indigo-600 font-black text-base sm:text-lg mb-2">${p.price} ج.م</p>
                             </div>
-                            <button onclick="addToCart(${p.id})" class="w-full bg-gray-900 text-white py-2.5 rounded-xl font-bold hover:bg-indigo-600 transition text-xs sm:text-sm">إضافة لطلباتك 🛒</button>
+                            <span class="text-xs text-indigo-600 font-bold underline">اضغط لعرض التفاصيل والصور 👁️</span>
                         </div>
                     </div>
                 `;
             });
             renderAdminTable();
+        }
+
+        function openProductModal(id) {
+            const p = products.find(item => item.id === id);
+            if(!p) return;
+
+            document.getElementById('modal-title').innerText = p.name;
+            document.getElementById('modal-name').innerText = p.name;
+            document.getElementById('modal-price').innerText = p.price + ' ج.م';
+            document.getElementById('modal-desc').innerText = p.desc || 'لا توجد تفاصيل إضافية متاحة لهذا المنتج.';
+            document.getElementById('modal-img1').src = p.image1;
+            document.getElementById('modal-img2').src = p.image2 || p.image1;
+            document.getElementById('modal-add-btn').setAttribute('onclick', `addToCart(${p.id}); closeProductModal();`);
+
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
         }
 
         function requestAdminAccess() {
@@ -214,41 +264,63 @@
             document.getElementById('admin-panel').classList.add('hidden');
         }
 
-        function changeTheme(theme) {
-            localStorage.setItem('drop_theme', theme);
-            applyTheme(theme);
+        function changeDesign(design) {
+            localStorage.setItem('drop_design', design);
+            applyDesign(design);
         }
 
-        function applyTheme(theme) {
-            const body = document.getElementById('body-theme');
-            if(theme === 'dark') {
-                body.className = "bg-gray-950 text-gray-100 flex flex-col min-h-screen";
-            } else if(theme === 'indigo') {
-                body.className = "bg-indigo-950 text-indigo-50 flex flex-col min-h-screen";
+        function applyDesign(design) {
+            const hero = document.getElementById('hero-section');
+            if(design === 'luxury') {
+                hero.className = "bg-gradient-to-r from-amber-800 to-amber-950 text-amber-100 py-14 px-4 text-center mb-8 shadow-inner transition-all duration-500";
+            } else if(design === 'minimal') {
+                hero.className = "bg-gray-900 text-gray-100 py-14 px-4 text-center mb-8 shadow-inner transition-all duration-500";
             } else {
-                body.className = "bg-gray-50 text-gray-800 flex flex-col min-h-screen";
+                hero.className = "bg-indigo-900 text-white py-14 px-4 text-center mb-8 shadow-inner transition-all duration-500";
             }
         }
 
         function addProduct() {
             const name = document.getElementById('new-name').value;
             const price = document.getElementById('new-price').value;
-            const image = document.getElementById('new-image').value;
+            const desc = document.getElementById('new-desc').value;
+            const img1File = document.getElementById('image1-file').files[0];
+            const img2File = document.getElementById('image2-file').files[0];
 
-            if(!name || !price || !image) {
-                alert('الرجاء إدخال اسم المنتج، السعر، ورابط الصورة!');
+            if(!name || !price || !img1File) {
+                alert('الرجاء إدخال اسم المنتج، السعر، والصورة الأساسية على الأقل!');
                 return;
             }
 
-            const newP = { id: Date.now(), name, price: Number(price), image };
+            const reader1 = new FileReader();
+            reader1.onload = function(e1) {
+                const img1Data = e1.target.result;
+
+                if(img2File) {
+                    const reader2 = new FileReader();
+                    reader2.onload = function(e2) {
+                        saveNewProduct(name, price, desc, img1Data, e2.target.result);
+                    };
+                    reader2.readAsDataURL(img2File);
+                } else {
+                    saveNewProduct(name, price, desc, img1Data, img1Data);
+                }
+            };
+            reader1.readAsDataURL(img1File);
+        }
+
+        function saveNewProduct(name, price, desc, img1, img2) {
+            const newP = { id: Date.now(), name, price: Number(price), desc, image1: img1, image2: img2 };
             products.push(newP);
             saveProducts();
             renderStore();
 
             document.getElementById('new-name').value = '';
             document.getElementById('new-price').value = '';
-            document.getElementById('new-image').value = '';
-            alert('تمت إضافة المنتج بنجاح!');
+            document.getElementById('new-desc').value = '';
+            document.getElementById('image1-file').value = '';
+            document.getElementById('image2-file').value = '';
+            alert('تمت إضافة المنتج بصورتيه وتفاصيله بنجاح!');
         }
 
         function editProduct(id) {
@@ -261,16 +333,16 @@
             const newPrice = prompt("تعديل سعر المنتج:", p.price);
             if(newPrice === null) return;
 
-            const newImage = prompt("تعديل رابط صورة المنتج:", p.image);
-            if(newImage === null) return;
+            const newDesc = prompt("تعديل تفاصيل ووصف المنتج:", p.desc || "");
+            if(newDesc === null) return;
 
             p.name = newName || p.name;
             p.price = Number(newPrice) || p.price;
-            p.image = newImage || p.image;
+            p.desc = newDesc;
 
             saveProducts();
             renderStore();
-            alert('تم تعديل المنتج بنجاح!');
+            alert('تم تعديل بيانات المنتج بنجاح!');
         }
 
         function deleteProduct(id) {
@@ -287,7 +359,10 @@
             products.forEach(p => {
                 list.innerHTML += `
                     <tr class="border-b border-gray-800">
-                        <td class="py-2.5">${p.name}</td>
+                        <td class="py-2.5 flex items-center gap-2">
+                            <img src="${p.image1}" class="w-8 h-8 rounded object-cover">
+                            <span>${p.name}</span>
+                        </td>
                         <td class="py-2.5">${p.price} ج.م</td>
                         <td class="py-2.5 flex gap-2">
                             <button onclick="editProduct(${p.id})" class="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">تعديل</button>
@@ -320,7 +395,7 @@
                 itemsContainer.innerHTML += `
                     <div class="flex justify-between items-center border-b pb-3 text-gray-800">
                         <div class="flex items-center gap-3">
-                            <img src="${item.image}" class="w-12 h-12 rounded-lg object-cover">
+                            <img src="${item.image1}" class="w-12 h-12 rounded-lg object-cover">
                             <div>
                                 <p class="font-bold text-xs sm:text-sm">${item.name}</p>
                                 <p class="text-indigo-600 text-xs font-bold">${item.price} ج.م</p>
@@ -351,7 +426,7 @@
                 alert('طلباتك فارغة، أضف منتجات أولاً!');
                 return;
             }
-            let message = "مرحباً، أريـد إتمام الطلبات التالية من *دروب شوبينج*:\n\n";
+            let message = "مرحباً، أريـد إتمام الطلبات التالية من *DROP SHOPPING*:\n\n";
             let total = 0;
             cart.forEach((item, index) => {
                 message += `${index + 1}. ${item.name} - ${item.price} ج.م\n`;
