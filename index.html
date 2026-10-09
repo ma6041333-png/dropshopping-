@@ -49,4 +49,81 @@
                         <span>المنتجات</span>
                         <span id="submenu-arrow" class="transition-transform duration-200">▼</span>
                     </button>
-                    <div id="submenu" class="hidden pr-4 mt-1 space-y-2 border
+                    <div id="submenu" class="hidden pr-4 mt-1 space-y-2 border-r-2 border-indigo-200 mr-3">
+                        <button onclick="filterCategory('all'); toggleMenu();" class="block w-full text-right py-1.5 px-3 rounded-lg text-sm hover:bg-indigo-50 hover:text-indigo-600 transition">كل المنتجات</button>
+                        <button onclick="filterCategory('ملابس'); toggleMenu();" class="block w-full text-right py-1.5 px-3 rounded-lg text-sm hover:bg-indigo-50 hover:text-indigo-600 transition">👕 ملابس</button>
+                        <button onclick="filterCategory('إكسسوارات'); toggleMenu();" class="block w-full text-right py-1.5 px-3 rounded-lg text-sm hover:bg-indigo-50 hover:text-indigo-600 transition">⌚ إكسسوارات</button>
+                    </div>
+                </div>
+
+                <a href="#" onclick="toggleMenu(); openCart();" class="block py-2.5 px-3 rounded-xl hover:bg-indigo-50 hover:text-indigo-600 transition">طلباتك 🛒</a>
+                <a href="#" onclick="toggleMenu(); requestAdminAccess();" class="block py-2.5 px-3 rounded-xl bg-slate-900 text-white hover:bg-slate-800 transition text-center shadow-md">الإعدادات (أدمن) ⚙️</a>
+            </nav>
+        </div>
+        <div class="text-xs text-center text-slate-400 border-t pt-4">
+            DROP SHOPPING © 2026
+        </div>
+    </div>
+
+    <!-- لوحة الإعدادات والتحكم (تفتح بالباسورد 1695) -->
+    <div id="admin-panel" class="hidden bg-slate-900 text-white p-6 shadow-2xl border-b border-slate-800">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex justify-between items-center mb-6 border-b border-slate-800 pb-3">
+                <h2 class="text-base sm:text-lg font-bold text-indigo-400">لوحة الإعدادات وتصميم المتجر (خاص بالآدمن)</h2>
+                <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1.5 rounded-lg text-xs hover:bg-red-500 font-bold transition">إغلاق 🔒</button>
+            </div>
+
+            <!-- أزرار تعديل شكل وتصميم الموقع بالكامل -->
+            <div class="mb-6 bg-slate-800/80 p-4 rounded-2xl border border-slate-700">
+                <h3 class="text-sm font-bold text-indigo-300 mb-3">🎨 تخصيص وتغيير ديزاين الموقع بالكامل:</h3>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="changeDesign('modern')" class="bg-indigo-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold hover:bg-indigo-500 transition shadow">ديزاين عصري فخم</button>
+                    <button onclick="changeDesign('luxury')" class="bg-amber-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold hover:bg-amber-500 transition shadow">ديزاين ذهبي ملكي</button>
+                    <button onclick="changeDesign('minimal')" class="bg-slate-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold hover:bg-slate-600 transition shadow">ديزاين هادئ بسيط</button>
+                </div>
+            </div>
+
+            <!-- إضافة منتج جديد -->
+            <div class="mb-6 bg-slate-800/80 p-4 rounded-2xl border border-slate-700">
+                <h3 class="text-sm font-bold text-indigo-300 mb-3">➕ إضافة منتج جديد (من مخزون الهاتف):</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+                    <input type="text" id="new-name" placeholder="اسم المنتج" class="p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500">
+                    <input type="number" id="new-price" placeholder="السعر (ج.م)" class="p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500">
+                    <select id="new-category" class="p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm focus:outline-none focus:border-indigo-500">
+                        <option value="ملابس">ملابس</option>
+                        <option value="إكسسوارات">إكسسوارات</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">الصورة الأساسية:</label>
+                        <input type="file" id="image1-file" accept="image/*" class="w-full p-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-300">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">الصورة الإضافية:</label>
+                        <input type="file" id="image2-file" accept="image/*" class="w-full p-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-300">
+                    </div>
+                </div>
+                <textarea id="new-desc" placeholder="تفاصيل ووصف المنتج..." class="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm mb-3 focus:outline-none focus:border-indigo-500"></textarea>
+                <button onclick="addProduct()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-500 transition shadow-lg text-sm">حفظ ونشر المنتج 🚀</button>
+            </div>
+            
+            <h3 class="text-sm font-bold text-indigo-300 mb-3">📋 إدارة وحذف أو تعديل المنتجات الحالية:</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-right text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-slate-400">
+                            <th class="py-2">المنتج</th>
+                            <th class="py-2">السعر</th>
+                            <th class="py-2">الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-products-list">
+                        <!-- جدول المنتجات -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- واجهة الترحيب الرئيسية للموقع -->
