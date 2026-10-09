@@ -42,18 +42,17 @@
     <!-- إشعار تمت الإضافة بنجاح -->
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
 
-    <!-- شريط أمازون العلوي الرئيسي مع شعار البراند الفخم -->
+    <!-- شريط أمازون العلوي الرئيسي مع شعار البراند والاسم -->
     <header class="bg-[#131921] text-white sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-4">
             
             <div class="flex items-center gap-3">
-                <!-- زر التلت شرط بدون تحميل (فتح فوري وسلس) -->
                 <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1">
                     ☰
                 </button>
-                <!-- شعار البراند الفخم المخصص -->
-                <div class="cursor-pointer flex items-center" onclick="triggerLoading(goHome)">
-                    <img src="https://i.ibb.co/3ykG8v8/1000425343-4.jpg" alt="DROP SHOPPING" class="h-9 object-contain rounded">
+                <div class="cursor-pointer flex items-center gap-2.5" onclick="triggerLoading(goHome)">
+                    <img src="https://i.ibb.co/3ykG8v8/1000425343-4.jpg" alt="DROP SHOPPING" class="h-9 w-9 object-cover rounded-full border border-amber-500/50">
+                    <span class="text-lg sm:text-xl font-black tracking-wider uppercase text-amber-400">DROP <span class="text-white">SHOPPING</span></span>
                 </div>
             </div>
 
@@ -66,7 +65,7 @@
         </div>
     </header>
 
-    <!-- القائمة الجانبية (تتسحب بشكل أنيق بعرض 280 بكسل ولا تغطي الشاشة بالكامل) -->
+    <!-- القائمة الجانبية -->
     <div id="side-menu" class="fixed inset-y-0 right-0 bg-[#131921] text-white w-[280px] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between p-5 border-l border-gray-800">
         <div>
             <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
@@ -85,7 +84,7 @@
         </div>
     </div>
 
-    <!-- لوحة الإعدادات والتحكم للآدمن (مخفية) -->
+    <!-- لوحة التحكم للآدمن -->
     <div id="admin-panel" class="hidden bg-[#131921] text-white p-6 shadow-xl border-b border-gray-800">
         <div class="max-w-4xl mx-auto">
             <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
@@ -229,9 +228,12 @@
         </div>
     </div>
 
-    <!-- فوتر الموقع مع شعار البراند الفخم -->
+    <!-- فوتر الموقع -->
     <footer class="bg-[#131921] text-gray-400 py-6 text-center text-xs mt-auto flex flex-col items-center gap-2">
-        <img src="https://i.ibb.co/3ykG8v8/1000425343-4.jpg" alt="DROP SHOPPING" class="h-8 object-contain rounded opacity-80">
+        <div class="flex items-center gap-2">
+            <img src="https://i.ibb.co/3ykG8v8/1000425343-4.jpg" alt="DROP SHOPPING" class="h-6 w-6 object-cover rounded-full">
+            <span class="text-amber-400 font-bold uppercase">DROP SHOPPING</span>
+        </div>
         <p>جميع حقوق الطبع والنشر محفوظة © 2026</p>
     </footer>
 
@@ -267,7 +269,6 @@
             }, 400);
         }
 
-        /* فتح القائمة الجانبية فورياً بدون تحميل وبسحب تدريجي مناسب */
         function toggleMenu() {
             const menu = document.getElementById('side-menu');
             if (menu) menu.classList.toggle('translate-x-full');
