@@ -11,6 +11,15 @@
         .product-card { transition: all 0.2s ease; }
         .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
         
+        /* تنسيق لون الشعار الذهبي الفخم المطابق للصورة */
+        .gold-brand-text {
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 50%, #aa771c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
         /* تأثير شاشة التحميل لباقي أزرار الموقع */
         #loading-overlay {
             position: fixed; inset: 0; background: rgba(19, 25, 33, 0.85); z-index: 9999;
@@ -42,17 +51,17 @@
     <!-- إشعار تمت الإضافة بنجاح -->
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
 
-    <!-- شريط أمازون العلوي الرئيسي مع شعار البراند والاسم -->
+    <!-- شريط أمازون العلوي الرئيسي (بدون أيقونة زرقاء، والاسم باللون الذهبي الفخم) -->
     <header class="bg-[#131921] text-white sticky top-0 z-50 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-4">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             
             <div class="flex items-center gap-3">
                 <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1">
                     ☰
                 </button>
-                <div class="cursor-pointer flex items-center gap-2.5" onclick="triggerLoading(goHome)">
-                    <img src="https://i.ibb.co/3ykG8v8/1000425343-4.jpg" alt="DROP SHOPPING" class="h-9 w-9 object-cover rounded-full border border-amber-500/50">
-                    <span class="text-lg sm:text-xl font-black tracking-wider uppercase text-amber-400">DROP <span class="text-white">SHOPPING</span></span>
+                <div class="cursor-pointer flex flex-col" onclick="triggerLoading(goHome)">
+                    <span class="text-lg sm:text-xl uppercase gold-brand-text leading-tight">DROP</span>
+                    <span class="text-[11px] uppercase tracking-widest text-amber-300 font-bold">SHOPPING</span>
                 </div>
             </div>
 
@@ -135,10 +144,11 @@
     <!-- واجهة المنتجات الرئيسية -->
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
         
+        <!-- البحث الفوري (حرف بحرف) -->
         <div id="home-search-section" class="mb-6 max-w-xl mx-auto">
             <div class="flex shadow-sm">
                 <input type="text" id="search-input" oninput="searchProducts()" placeholder="ابحث عن منتجك المفضلة هنا..." class="w-full py-2.5 px-4 rounded-r-lg bg-white border border-gray-300 text-sm focus:outline-none focus:border-blue-500">
-                <button onclick="triggerLoading(searchProducts)" class="bg-[#febd69] hover:bg-[#f3a847] text-gray-900 px-5 rounded-l-lg font-black text-sm flex items-center justify-center transition">
+                <button onclick="searchProducts()" class="bg-[#febd69] hover:bg-[#f3a847] text-gray-900 px-5 rounded-l-lg font-black text-sm flex items-center justify-center transition">
                     🔍 بحث
                 </button>
             </div>
@@ -229,11 +239,8 @@
     </div>
 
     <!-- فوتر الموقع -->
-    <footer class="bg-[#131921] text-gray-400 py-6 text-center text-xs mt-auto flex flex-col items-center gap-2">
-        <div class="flex items-center gap-2">
-            <img src="https://i.ibb.co/3ykG8v8/1000425343-4.jpg" alt="DROP SHOPPING" class="h-6 w-6 object-cover rounded-full">
-            <span class="text-amber-400 font-bold uppercase">DROP SHOPPING</span>
-        </div>
+    <footer class="bg-[#131921] text-gray-400 py-6 text-center text-xs mt-auto flex flex-col items-center gap-1.5">
+        <span class="gold-brand-text text-base uppercase">DROP SHOPPING</span>
         <p>جميع حقوق الطبع والنشر محفوظة © 2026</p>
     </footer>
 
@@ -308,8 +315,9 @@
             renderStore();
         }
 
+        // البحث الفوري حرف بحرف (Live Search)
         function searchProducts() {
-            const query = document.getElementById('search-input').value.toLowerCase();
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
             renderStore(query);
         }
 
