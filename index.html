@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DROP SHOPPING - متجر الملابس الإلكتروني</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap');
+        :root { --primary: #111827; --secondary: #f3f4f6; --accent: #d97706; }
+        * { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; }
+        .product-card:hover .product-img { transform: scale(1.05); }
+        .product-img { transition: transform 0.5s ease; }
+        .cart-scroll::-webkit-scrollbar { width: 6px; }
+        .cart-scroll::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        .chat-bubble { max-width: 85%; }
+        .typing-indicator span { display: inline-block; width: 6px; height: 6px; background-color: #9ca3af; border-radius: 50%; animation: typing 1.4s infinite ease-in-out both; margin: 0 2px; }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="showSection('store-front')">
+                    <span class="font-black text-2xl md:text-3xl tracking-tighter text-gray-900">DROP <span class="text-amber-600">SHOPPING</span></span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8 space-x-reverse">
+                    <a href="#" onclick="showSection('store-front')" class="text-gray-700 hover:text-amber-600 font-semibold transition">الرئيسية</a>
+                    <a href="#products-section" class="text-gray-700 hover:text-amber-600 font-semibold transition">أحدث التشكيلات</a>
+                    <button onclick="showAdminPanel()" class="text-gray-500 hover:text-gray-900 text-sm font-medium border border-gray-300 px-3 py-1 rounded transition">لوحة الإدارة (Demo)</button>
+                </div>
+                <div class="flex items-center">
+                    <button onclick="toggleCart()" class="relative p-2 text-gray-700 hover:text-amber-600 transition">
+                        <i class="fa-solid fa-shopping-bag text-2xl"></i>
+                        <span id="cart-badge" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold text-white bg-amber-600 rounded-full">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow">
+        <div id="store-front" class="block">
+            <div class="relative bg-gray-900 h-[60vh] overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2070&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-50">
+                <div class="absolute inset-0 flex flex-col justify-center items-center text-center px-4">
+                    <h1 class="text-4xl md:text-6xl font-black text-white mb-4 tracking-wide uppercase">مجموعة الخريف الجديدة</h1>
+                    <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl font-light">اكتشف أحدث صيحات الموضة المصممة خصيصاً لتمنحك الأناقة والراحة مع DROP SHOPPING.</p>
+                    <a href="#products-section" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-8 rounded-full transition shadow-lg">تسوق الآن</a>
+                </div>
+            </div>
+
+            <section id="products-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">أحدث المنتجات</h2>
+                    <div class="w-24 h-1 bg-amber-600 mx-auto"></div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" id="products-grid"></div>
+            </section>
+        </div>
+
+        <div id="admin-panel" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900">لوحة تحكم المتجر</h2>
+                <button onclick="showSection('store-front')" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded transition">عودة للمتجر</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="md:col-span-1 bg-white p-6 rounded-lg shadow-md border border-gray-100 h-fit">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">إضافة منتج جديد</h3>
+                    <form id="add-product-form" onsubmit="handleAddProduct(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">اسم المنتج</label>
+                            <input type="text" id="new-prod-name" required class="w-full border border-gray-300 rounded p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">السعر (ج.م)</label>
+                            <input type="number" id="new-prod-price" required min="1" class="w-full border border-gray-300 rounded p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">رابط الصورة (URL)</label>
+                            <input type="url" id="new-prod-img" required class="w-full border border-gray-300 rounded p-2 text-left" placeholder="https://...">
+                        </div>
+                        <button type="submit" class="w-full bg-gray-900 text-white font-bold py-2 px-4 rounded hover:bg-gray-800">إضافة المنتج</button>
+                    </form>
+                </div>
+                <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                    <h3 class="text-xl font-bold mb-4 border-b pb-2">إدارة المنتجات الحالية</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">الصورة</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">اسم المنتج</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">السعر</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-products-table" class="bg-white divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="cart-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-[60] hidden transition-opacity opacity-0" onclick="toggleCart()"></div>
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 z-[70] w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
+            <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <i class="fa-solid fa-cart-shopping text-amber-600"></i> سلة المشتريات
+            </h2>
+            <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-800"><i class="fa-solid fa-times text-2xl"></i></button>
+        </div>
+        <div id="cart-items-container" class="flex-grow p-4 overflow-y-auto cart-scroll flex flex-col gap-4"></div>
+        <div class="border-t border-gray-200 bg-white p-4">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-gray-600 font-semibold">الإجمالي:</span>
+                <span id="cart-total-price" class="text-2xl font-black text-gray-900">0 ج.م</span>
+            </div>
+            <div id="checkout-form-container" class="hidden flex-col gap-3 mt-4 border-t pt-4">
+                <h3 class="font-bold text-gray-800 text-sm mb-1">بيانات التوصيل (الدفع عند الاستلام)</h3>
+                <input type="text" id="cust-name" placeholder="الاسم ثلاثي" class="w-full text-sm border border-gray-300 rounded p-2">
+                <input type="tel" id="cust-phone" placeholder="رقم الهاتف" class="w-full text-sm border border-gray-300 rounded p-2">
+                <textarea id="cust-address" placeholder="العنوان بالتفصيل" rows="2" class="w-full text-sm border border-gray-300 rounded p-2"></textarea>
+                <button onclick="submitOrder()" class="w-full mt-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg flex justify-center items-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-xl"></i> تأكيد وإرسال الطلب عبر الواتساب
+                </button>
+            </div>
+            <button id="proceed-checkout-btn" onclick="showCheckoutForm()" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 rounded-lg transition mt-2">متابعة الطلب</button>
+        </div>
+    </div>
+
+    <div id="ai-chat-widget" class="fixed bottom-4 left-4 z-[80] flex flex-col items-start">
+        <div id="ai-chat-box" class="bg-white w-[90vw] sm:w-[400px] rounded-2xl shadow-2xl border border-gray-200 overflow-hidden mb-4 transform scale-0 transition-transform duration-300 flex-col hidden h-[500px]">
+            <div class="bg-gray-900 text-white p-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-amber-600 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold">مساعد DROP SHOPPING الذكي</h4>
+                        <p class="text-xs text-gray-300">مدعوم بالذكاء الاصطناعي</p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="text-gray-300 hover:text-white"><i class="fa-solid fa-times text-xl"></i></button>
+            </div>
+            <div id="chat-messages" class="flex-grow p-4 overflow-y-auto bg-gray-50 flex flex-col gap-4 text-sm">
+                <div class="flex items-start gap-2">
+                    <div class="bg-white border border-gray-200 text-gray-800 p-3 rounded-2xl rounded-tr-none shadow-sm chat-bubble">
+                        مرحباً بك في DROP SHOPPING! 👋 كيف يمكنني مساعدتك في اختيار أزيائك اليوم؟ ✨
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 bg-white border-t border-gray-100 flex gap-2 items-center">
+                <input type="text" id="chat-input" placeholder="اسألني عن المنتجات والتنسيقات..." class="flex-grow bg-gray-100 border-none rounded-full px-5 py-2.5 text-sm focus:outline-none" onkeypress="handleChatKeyPress(event)">
+                <button onclick="sendChatMessage()" class="bg-gray-900 hover:bg-amber-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-paper-plane text-sm transform -scale-x-100"></i>
+                </button>
+            </div>
+        </div>
+        <button onclick="toggleChat()" class="w-14 h-14 bg-gray-900 hover:bg-amber-600 text-white rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110">
+            <i class="fa-solid fa-robot text-2xl"></i>
+        </button>
+    </div>
+
+    <script>
+        let products = [
+            { id: 1, name: "تيشيرت أوفر سايز قطن ياقة دائرية", price: 450, image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop", sizes: ['S', 'M', 'L', 'XL'] },
+            { id: 2, name: "جاكيت جينز كلاسيكي أزرق", price: 1200, image: "https://images.unsplash.com/photo-1495105711221-f09b53755490?w=500&auto=format&fit=crop", sizes: ['M', 'L', 'XL'] },
+            { id: 3, name: "بنطال كارغو كاجوال زيتي", price: 650, image: "https://images.unsplash.com/photo-1517438476312-10d79c077509?w=500&auto=format&fit=crop", sizes: ['30', '32', '34', '36'] },
+            { id: 4, name: "قميص كتان صيفي خفيف", price: 550, image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop", sizes: ['S', 'M', 'L'] }
+        ];
+
+        let cart = [];
+        const WHATSAPP_NUMBER = "201550795100";
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = products.map(product => {
+                const sizesHtml = product.sizes.map(size => `<option value="${size}">${size}</option>`).join('');
+                return `
+                <div class="product-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full">
+                    <div class="relative overflow-hidden aspect-[3/4] bg-gray-100">
+                        <img src="${product.image}" class="product-img w-full h-full object-cover">
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <h3 class="text-lg font-bold text-gray-900 mb-1">${product.name}</h3>
+                        <p class="text-amber-600 font-black text-xl mb-4">${product.price} ج.م</p>
+                        <div class="mt-auto space-y-3">
+                            <div class="flex items-center gap-2">
+                                <label class="text-sm text-gray-500">المقاس:</label>
+                                <select id="size-${product.id}" class="bg-gray-50 border border-gray-300 text-sm rounded block w-full p-1.5">${sizesHtml}</select>
+                            </div>
+                            <button onclick="addToCart(${product.id})" class="w-full bg-gray-900 hover:bg-amber-600 text-white font-bold py-2.5 rounded transition flex justify-center items-center gap-2">
+                                <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderAdminProducts() {
+            const tbody = document.getElementById('admin-products-table');
+            tbody.innerHTML = products.map(product => `
+                <tr>
+                    <td class="px-6 py-4"><img src="${product.image}" class="h-10 w-10 rounded-full object-cover"></td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">${product.name}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">${product.price} ج.م</td>
+                    <td class="px-6 py-4 text-sm font-medium">
+                        <button onclick="deleteProduct(${product.id})" class="text-red-600 hover:text-red-900"><i class="fa-solid fa-trash"></i> حذف</button>
+                    </td>
+                </tr>`).join('');
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const sizeSelect = document.getElementById(`size-${productId}`);
+            const selectedSize = sizeSelect ? sizeSelect.value : 'N/A';
+            const existingItem = cart.find(item => item.id === productId && item.size === selectedSize);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, size: selectedSize, quantity: 1, cartId: Date.now().toString() });
+            }
+            updateCartUI();
+            toggleCart();
+        }
+
+        function updateCartItemQty(cartId, delta) {
+            const item = cart.find(i => i.cartId === cartId);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) cart = cart.filter(i => i.cartId !== cartId);
+                updateCartUI();
+            }
+        }
+
+        function removeCartItem(cartId) {
+            cart = cart.filter(i => i.cartId !== cartId);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const badge = document.getElementById('cart-badge');
+            const totalPriceEl = document.getElementById('cart-total-price');
+            let totalQty = 0, totalPrice = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-500 my-12">سلة المشتريات فارغة</div>';
+                badge.innerText = '0';
+                totalPriceEl.innerText = '0 ج.م';
+                return;
+            }
+
+            container.innerHTML = cart.map(item => {
+                totalQty += item.quantity;
+                totalPrice += (item.price * item.quantity);
+                return `
+                <div class="flex gap-4 bg-white p-3 border border-gray-100 rounded-lg shadow-sm">
+                    <img src="${item.image}" class="w-16 h-20 object-cover rounded">
+                    <div class="flex flex-col justify-between flex-grow">
+                        <div class="flex justify-between">
+                            <h4 class="text-sm font-bold text-gray-800">${item.name} (${item.size})</h4>
+                            <button onclick="removeCartItem('${item.cartId}')" class="text-red-400 hover:text-red-600"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="font-bold text-amber-600">${item.price} ج.م</span>
+                            <div class="flex items-center border rounded">
+                                <button onclick="updateCartItemQty('${item.cartId}', -1)" class="w-6 h-6 bg-gray-50">-</button>
+                                <span class="w-6 text-center text-sm">${item.quantity}</span>
+                                <button onclick="updateCartItemQty('${item.cartId}', 1)" class="w-6 h-6 bg-gray-50">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            badge.innerText = totalQty;
+            totalPriceEl.innerText = `${totalPrice} ج.م`;
+        }
+
+        function toggleCart() {
+            const sidebar = document.getElementById('cart-sidebar');
+            const overlay = document.getElementById('cart-overlay');
+            const isClosed = sidebar.classList.contains('translate-x-full');
+            if (isClosed) {
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+                sidebar.classList.remove('translate-x-full');
+            } else {
+                sidebar.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function showSection(sectionId) {
+            document.getElementById('store-front').style.display = sectionId === 'store-front' ? 'block' : 'none';
+            document.getElementById('admin-panel').style.display = sectionId === 'admin-panel' ? 'block' : 'none';
+            window.scrollTo(0,0);
+        }
+
+        function showAdminPanel() {
+            const pwd = prompt("أدخل كلمة مرور الإدارة (اكتب: 1234)");
+            if (pwd === "1234") { showSection('admin-panel'); renderAdminProducts(); }
+            else if (pwd !== null) alert("كلمة المرور خاطئة");
+        }
+
+        function showCheckoutForm() {
+            document.getElementById('proceed-checkout-btn').classList.add('hidden');
+            const form = document.getElementById('checkout-form-container');
+            form.classList.remove('hidden');
+            form.classList.add('flex');
+        }
+
+        function submitOrder() {
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const address = document.getElementById('cust-address').value.trim();
+            if (!name || !phone || !address) { alert("يرجى ملء جميع بيانات التوصيل."); return; }
+
+            let msg = `*طلب جديد من DROP SHOPPING* 🛍️\nالاسم: ${name}\nالهاتف: ${phone}\nالعنوان: ${address}\n\n*المنتجات:*\n`;
+            let total = 0;
+            cart.forEach((item, i) => {
+                total += (item.price * item.quantity);
+                msg += `${i+1}- ${item.name} (${item.size}) × ${item.quantity}\n`;
+            });
+            msg += `\n*الإجمالي: ${total} ج.م*`;
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function handleAddProduct(e) {
+            e.preventDefault();
+            products.unshift({
+                id: Date.now(),
+                name: document.getElementById('new-prod-name').value,
+                price: parseInt(document.getElementById('new-prod-price').value),
+                image: document.getElementById('new-prod-img').value,
+                sizes: ['S', 'M', 'L', 'XL']
+            });
+            renderAdminProducts();
+            renderProducts();
+            e.target.reset();
+            alert("تم إضافة المنتج بنجاح!");
+        }
+
+        function deleteProduct(id) {
+            if(confirm("هل أنت متأكد من الحذف؟")) {
+                products = products.filter(p => p.id !== id);
+                renderAdminProducts();
+                renderProducts();
+            }
+        }
+
+        let isChatOpen = false;
+        function toggleChat() {
+            const box = document.getElementById('ai-chat-box');
+            isChatOpen = !isChatOpen;
+            box.classList.toggle('hidden', !isChatOpen);
+            box.classList.toggle('flex', isChatOpen);
+            setTimeout(() => box.classList.toggle('scale-100', isChatOpen), 10);
+            box.classList.toggle('scale-0', !isChatOpen);
+        }
+
+        function handleChatKeyPress(e) { if (e.key === 'Enter') sendChatMessage(); }
+        
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            
+            const container = document.getElementById('chat-messages');
+            container.innerHTML += `<div class="flex justify-end"><div class="bg-amber-600 text-white p-3 rounded-2xl">${text}</div></div>`;
+            container.scrollTop = container.scrollHeight;
+
+            setTimeout(() => {
+                container.innerHTML += `<div class="flex"><div class="bg-white border p-3 rounded-2xl">أهلاً بك في متجر DROP SHOPPING! ✨ كيف يمكنني مساعدتك في اختيار أفضل المنتجات اليوم؟</div></div>`;
+                container.scrollTop = container.scrollHeight;
+            }, 1000);
+        }
+
+        window.onload = () => { renderProducts(); updateCartUI(); };
+    </script>
+</body>
+</html>
+```
