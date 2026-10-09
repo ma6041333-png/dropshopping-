@@ -12,40 +12,60 @@
         .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
+<body id="body-theme" class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
-    <!-- الشريط العلوي الاحترافي -->
+    <!-- الشريط العلوي الاحترافي مع القائمة الكاملة -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <span class="bg-indigo-600 text-white font-black px-2.5 py-1 rounded-lg text-lg">T</span>
                 <h1 class="text-xl font-black text-gray-900 tracking-wide">متجر <span class="text-indigo-600">تاج</span></h1>
             </div>
-            <div class="flex items-center gap-2 sm:gap-4">
-                <button onclick="requestAdminAccess()" class="bg-gray-900 text-white px-3 py-2 rounded-xl text-xs sm:text-sm font-bold hover:bg-gray-800 transition flex items-center gap-1">
-                    <span>⚙️</span> الأدمن
-                </button>
-                <button onclick="openCart()" class="relative bg-indigo-50 text-indigo-600 px-3 py-2 rounded-xl text-xs sm:text-sm font-bold hover:bg-indigo-100 transition flex items-center gap-1">
-                    <span>🛒</span> السلة <span id="cart-count" class="bg-indigo-600 text-white text-xs px-1.5 py-0.5 rounded-full">0</span>
-                </button>
+
+            <!-- قائمة التنقل الرئيسية -->
+            <nav class="hidden md:flex items-center gap-6 font-bold text-sm text-gray-600">
+                <a href="#home" class="hover:text-indigo-600 transition">الرئيسية</a>
+                <a href="#products-section" class="hover:text-indigo-600 transition">المنتجات</a>
+                <a href="#" onclick="openCart()" class="hover:text-indigo-600 transition">طلباتك 🛒</a>
+                <a href="#" onclick="requestAdminAccess()" class="text-indigo-600 hover:underline">الإعدادات ⚙️</a>
+            </nav>
+
+            <div class="flex items-center gap-2 md:hidden">
+                <button onclick="openCart()" class="relative bg-indigo-50 text-indigo-600 px-3 py-2 rounded-xl text-xs font-bold">🛒 السلة <span id="cart-count-mobile" class="bg-indigo-600 text-white text-xs px-1.5 py-0.5 rounded-full">0</span></button>
+                <button onclick="requestAdminAccess()" class="bg-gray-900 text-white px-3 py-2 rounded-xl text-xs font-bold">الإعدادات ⚙️</button>
             </div>
         </div>
     </header>
 
-    <!-- لوحة التحكم السرية الخاصة بك (محمية بكلمة المرور الجديدة) -->
+    <!-- لوحة الإعدادات والتحكم الخاصة بالأدمن (محمية بالباسورد 12965) -->
     <div id="admin-panel" class="hidden bg-gray-900 text-white p-6 shadow-2xl border-b border-gray-800">
         <div class="max-w-4xl mx-auto">
             <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-3">
-                <h2 class="text-lg font-bold text-indigo-400">لوحة تحكم المتجر (إضافة وحذف المنتجات)</h2>
-                <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1.5 rounded-lg text-xs hover:bg-red-500 font-bold">إغلاق اللوحة 🔒</button>
+                <h2 class="text-lg font-bold text-indigo-400">لوحة الإعدادات والتحكم (خاص بالآدمن تاج)</h2>
+                <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1.5 rounded-lg text-xs hover:bg-red-500 font-bold">إغلاق الإعدادات 🔒</button>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-                <input type="text" id="new-name" placeholder="اسم المنتج الجديد" class="p-2.5 rounded-xl bg-gray-800 border border-gray-700 text-sm focus:outline-none focus:border-indigo-500">
+
+            <!-- تبويب: تعديل شكل ولون الموقع -->
+            <div class="mb-8 bg-gray-800 p-4 rounded-xl border border-gray-700">
+                <h3 class="text-sm font-bold text-indigo-300 mb-3">🎨 تعديل شكل وتصميم الموقع:</h3>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="changeTheme('light')" class="bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg text-xs font-bold">ستايل أبيض كلاسيكي</button>
+                    <button onclick="changeTheme('dark')" class="bg-black text-white px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-700">ستايل ليلي داكن</button>
+                    <button onclick="changeTheme('indigo')" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">ستايل ملكي أزرق</button>
+                </div>
+            </div>
+
+            <!-- تبويب: إضافة منتج جديد -->
+            <h3 class="text-sm font-bold text-indigo-300 mb-3">➕ إضافة منتج جديد:</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                <input type="text" id="new-name" placeholder="اسم المنتج" class="p-2.5 rounded-xl bg-gray-800 border border-gray-700 text-sm focus:outline-none focus:border-indigo-500">
                 <input type="number" id="new-price" placeholder="السعر (ج.م)" class="p-2.5 rounded-xl bg-gray-800 border border-gray-700 text-sm focus:outline-none focus:border-indigo-500">
                 <input type="text" id="new-image" placeholder="رابط صورة المنتج" class="p-2.5 rounded-xl bg-gray-800 border border-gray-700 text-sm focus:outline-none focus:border-indigo-500">
             </div>
-            <button onclick="addProduct()" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-bold hover:bg-indigo-500 transition mb-6 shadow-lg">نشر المنتج في المتجر ➕</button>
+            <button onclick="addProduct()" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-bold hover:bg-indigo-500 transition mb-8 shadow-lg">حفظ وإضافة المنتج للمتجر</button>
             
+            <!-- تبويب: حذف وتعديل المنتجات الحالية -->
+            <h3 class="text-sm font-bold text-indigo-300 mb-3">📋 قائمة المنتجات (للحذف):</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-right text-sm">
                     <thead>
@@ -56,45 +76,44 @@
                         </tr>
                     </thead>
                     <tbody id="admin-products-list">
-                        <!-- جدول المنتجات للتحكم -->
+                        <!-- جدول المنتجات -->
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- واجهة الترحيب والبنر المميز -->
-    <section class="bg-indigo-900 text-white py-12 px-4 text-center mb-8 shadow-inner">
+    <!-- واجهة الترحيب (الرئيسية) -->
+    <section id="home" class="bg-indigo-900 text-white py-12 px-4 text-center mb-8 shadow-inner">
         <div class="max-w-3xl mx-auto">
-            <h2 class="text-3xl sm:text-4xl font-black mb-3">أقوى العروض والتشكيلات العصرية</h2>
-            <p class="text-indigo-200 text-sm sm:text-base mb-6">تسوق الآن أحدث المنتجات بجودة عالية وأسعار منافسة مع خدمة التوصيل السريع.</p>
-            <span class="inline-block bg-white/10 text-indigo-100 px-4 py-1.5 rounded-full text-xs font-medium border border-white/20">توصيل لجميع المحافظات 🚚</span>
+            <h2 class="text-3xl sm:text-4xl font-black mb-3">أهلاً بك في متجر تاج الرسمي</h2>
+            <p class="text-indigo-200 text-sm sm:text-base mb-6">تسوق الآن أفضل المنتجات العصرية بأعلى جودة وأسعار مميزة.</p>
+            <span class="inline-block bg-white/10 text-indigo-100 px-4 py-1.5 rounded-full text-xs font-medium border border-white/20">شحن سريع لجميع المحافظات 🚚</span>
         </div>
     </section>
 
-    <!-- قائمة المنتجات الرئيسية -->
-    <main class="max-w-7xl mx-auto px-4 py-4 flex-grow w-full mb-12">
+    <!-- قائمة المنتجات (قسم المنتجات) -->
+    <main id="products-section" class="max-w-7xl mx-auto px-4 py-4 flex-grow w-full mb-12">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-xl font-black text-gray-900 border-r-4 border-indigo-600 pr-3">قائمة المنتجات المتاحة</h3>
-            <span id="products-count" class="text-xs text-gray-500 font-bold bg-gray-200 px-2.5 py-1 rounded-full">0 منتجات</span>
+            <h3 class="text-xl font-black border-r-4 border-indigo-600 pr-3">قائمة المنتجات</h3>
+            <span id="products-count" class="text-xs font-bold bg-gray-200 text-gray-700 px-2.5 py-1 rounded-full">0 منتجات</span>
         </div>
 
-        <!-- شبكة عرض المنتجات -->
         <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- المنتجات ستظهر هنا تلقائياً -->
+            <!-- المنتجات ستعرض هنا ديناميكياً -->
         </div>
     </main>
 
-    <!-- نافذة سلة المشتريات والطلبات الجانبية -->
+    <!-- قائمة طلباتك (السلة الجانبية) -->
     <div id="cart-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex justify-end">
-        <div class="bg-white w-full max-w-md h-full p-6 flex flex-col justify-between shadow-2xl animate-fade-in">
+        <div class="bg-white w-full max-w-md h-full p-6 flex flex-col justify-between shadow-2xl">
             <div>
                 <div class="flex justify-between items-center mb-6 border-b pb-3">
-                    <h3 class="text-lg font-black text-gray-900">سلة طلباتك 🛍️</h3>
-                    <button onclick="closeCart()" class="text-gray-400 hover:text-gray-700 font-bold text-xl">✕</button>
+                    <h3 class="text-lg font-black text-gray-900">طلباتك الحالية 🛍️</h3>
+                    <button onclick="closeCart()" class="text-gray-400 font-bold text-xl">✕</button>
                 </div>
                 <div id="cart-items" class="space-y-4 overflow-y-auto max-h-[55vh] pr-1">
-                    <!-- عناصر الطلبات -->
+                    <!-- عناصر طلباتك -->
                 </div>
             </div>
             <div class="border-t pt-4 bg-white">
@@ -113,10 +132,12 @@
     </footer>
 
     <script>
-        // كلمة المرور الجديدة الخاصة بك
-        const ADMIN_PASSWORD = "12695";
+        // كلمة المرور الخاصة بالإعدادات والأدمن
+        const ADMIN_PASSWORD = "12965";
+        
+        // رقم الواتساب المخصص لاستقبال الطلبات
+        const WHATSAPP_PHONE = "201550795100";
 
-        // المنتجات الافتراضية
         let defaultProducts = [
             { id: 1, name: "تيشيرت أوفر سايز قطن فخم", price: 450, image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500" },
             { id: 2, name: "جاكيت جينز كلاسيكي أزرق", price: 1200, image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=500" },
@@ -126,6 +147,9 @@
 
         let products = JSON.parse(localStorage.getItem('taj_store_products')) || defaultProducts;
         let cart = [];
+        let currentTheme = localStorage.getItem('taj_theme') || 'light';
+
+        applyTheme(currentTheme);
 
         function saveProducts() {
             localStorage.setItem('taj_store_products', JSON.stringify(products));
@@ -147,7 +171,7 @@
                                 <h4 class="font-bold text-gray-900 mb-1 text-sm sm:text-base line-clamp-1">${p.name}</h4>
                                 <p class="text-indigo-600 font-black text-base sm:text-lg mb-4">${p.price} ج.م</p>
                             </div>
-                            <button onclick="addToCart(${p.id})" class="w-full bg-gray-900 text-white py-2.5 rounded-xl font-bold hover:bg-indigo-600 transition text-xs sm:text-sm">إضافة للسلة 🛒</button>
+                            <button onclick="addToCart(${p.id})" class="w-full bg-gray-900 text-white py-2.5 rounded-xl font-bold hover:bg-indigo-600 transition text-xs sm:text-sm">إضافة لطلباتك 🛒</button>
                         </div>
                     </div>
                 `;
@@ -156,7 +180,7 @@
         }
 
         function requestAdminAccess() {
-            let pass = prompt("أدخل كلمة مرور لوحة التحكم الخاصة بك:");
+            let pass = prompt("أدخل كلمة مرور الإعدادات الخاصة بك:");
             if (pass === ADMIN_PASSWORD) {
                 document.getElementById('admin-panel').classList.remove('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -167,6 +191,22 @@
 
         function logoutAdmin() {
             document.getElementById('admin-panel').classList.add('hidden');
+        }
+
+        function changeTheme(theme) {
+            localStorage.setItem('taj_theme', theme);
+            applyTheme(theme);
+        }
+
+        function applyTheme(theme) {
+            const body = document.getElementById('body-theme');
+            if(theme === 'dark') {
+                body.className = "bg-gray-950 text-gray-100 flex flex-col min-h-screen";
+            } else if(theme === 'indigo') {
+                body.className = "bg-indigo-950 text-indigo-50 flex flex-col min-h-screen";
+            } else {
+                body.className = "bg-gray-50 text-gray-800 flex flex-col min-h-screen";
+            }
         }
 
         function addProduct() {
@@ -187,7 +227,7 @@
             document.getElementById('new-name').value = '';
             document.getElementById('new-price').value = '';
             document.getElementById('new-image').value = '';
-            alert('تمت إضافة المنتج بنجاح إلى واجهة المتجر!');
+            alert('تمت إضافة المنتج بنجاح!');
         }
 
         function deleteProduct(id) {
@@ -220,23 +260,23 @@
         }
 
         function updateCartUI() {
-            document.getElementById('cart-count').innerText = cart.length;
+            document.getElementById('cart-count-mobile').innerText = cart.length;
             const itemsContainer = document.getElementById('cart-items');
             itemsContainer.innerHTML = '';
             let total = 0;
 
             if(cart.length === 0) {
-                itemsContainer.innerHTML = '<p class="text-center text-gray-400 py-8 text-sm">سلة الطلبات فارغة حالياً</p>';
+                itemsContainer.innerHTML = '<p class="text-center text-gray-400 py-8 text-sm">قائمة طلباتك فارغة حالياً</p>';
             }
 
             cart.forEach((item, index) => {
                 total += item.price;
                 itemsContainer.innerHTML += `
-                    <div class="flex justify-between items-center border-b pb-3">
+                    <div class="flex justify-between items-center border-b pb-3 text-gray-800">
                         <div class="flex items-center gap-3">
                             <img src="${item.image}" class="w-12 h-12 rounded-lg object-cover">
                             <div>
-                                <p class="font-bold text-xs sm:text-sm text-gray-900">${item.name}</p>
+                                <p class="font-bold text-xs sm:text-sm">${item.name}</p>
                                 <p class="text-indigo-600 text-xs font-bold">${item.price} ج.م</p>
                             </div>
                         </div>
@@ -262,10 +302,10 @@
 
         function checkoutWhatsApp() {
             if(cart.length === 0) {
-                alert('السلة فارغة، أضف منتجات أولاً!');
+                alert('طلباتك فارغة، أضف منتجات أولاً!');
                 return;
             }
-            let message = "مرحباً، أريـد إتمام الطلب التالي من *متجر تاج*:\n\n";
+            let message = "مرحباً، أريـد إتمام الطلبات التالية من *متجر تاج*:\n\n";
             let total = 0;
             cart.forEach((item, index) => {
                 message += `${index + 1}. ${item.name} - ${item.price} ج.م\n`;
@@ -273,8 +313,7 @@
             });
             message += `\nإجمالي الطلبات: *${total} ج.م*`;
             
-            let phone = "201000000000"; 
-            let url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            let url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');
         }
 
