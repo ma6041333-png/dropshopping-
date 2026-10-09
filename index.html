@@ -11,6 +11,16 @@
         .product-card { transition: all 0.2s ease; }
         .product-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
         
+        /* تأثير شاشة التحميل (مثل نون وأمازون) */
+        #loading-overlay {
+            position: fixed; inset: 0; background: rgba(19, 25, 33, 0.85); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;
+            transition: opacity 0.3s ease; opacity: 0; pointer-events: none;
+        }
+        #loading-overlay.active { opacity: 1; pointer-events: auto; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #febd69; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         /* تصميم إشعار "تمت الإضافة" الفخم */
         #toast-notification {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
@@ -23,6 +33,12 @@
 </head>
 <body class="bg-[#eaeded] text-gray-900 flex flex-col min-h-screen">
 
+    <!-- شاشة التحميل -->
+    <div id="loading-overlay">
+        <div class="spinner mb-3"></div>
+        <p class="text-sm font-bold text-amber-400">جاري المعالجة والانتقال...</p>
+    </div>
+
     <!-- إشعار تمت الإضافة بنجاح -->
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
 
@@ -31,17 +47,17 @@
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             
             <div class="flex items-center gap-3">
-                <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1">
+                <button onclick="triggerLoading(toggleMenu)" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1">
                     ☰
                 </button>
-                <div class="flex items-center gap-2.5 cursor-pointer" onclick="goHome()">
+                <div class="flex items-center gap-2.5 cursor-pointer" onclick="triggerLoading(goHome)">
                     <span class="text-lg sm:text-xl font-black tracking-wider uppercase text-amber-400">DROP <span class="text-white">SHOPPING</span></span>
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
                 <button onclick="requestAdminAccess()" class="text-gray-400 hover:text-amber-400 p-1 text-xs transition" title="لوحة الأدمن">⚙️</button>
-                <button onclick="openCart()" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-3.5 py-1.5 rounded-md text-amber-400 font-bold transition">
+                <button onclick="triggerLoading(openCart)" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-3.5 py-1.5 rounded-md text-amber-400 font-bold transition">
                     🛒 <span id="cart-count" class="bg-[#febd69] text-gray-900 text-xs px-1.5 py-0.2 rounded-full font-black">0</span>
                 </button>
             </div>
@@ -56,9 +72,9 @@
                 <button onclick="toggleMenu()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
             </div>
             <nav class="space-y-2 font-bold text-xs sm:text-sm">
-                <button onclick="toggleMenu(); goHome(); filterCategory('all');" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-gray-800 hover:text-amber-400 transition">📋 الرئيسية وكل المنتجات</button>
-                <button onclick="toggleMenu(); goHome(); filterCategory('ملابس');" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-gray-800 hover:text-amber-400 transition">👕 قسم الملابس</button>
-                <button onclick="toggleMenu(); goHome(); filterCategory('إكسسوارات');" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-gray-800 hover:text-amber-400 transition">⌚ قسم الإكسسوارات</button>
+                <button onclick="triggerLoading(() => { toggleMenu(); goHome(); filterCategory('all'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-gray-800 hover:text-amber-400 transition">📋 الرئيسية وكل المنتجات</button>
+                <button onclick="triggerLoading(() => { toggleMenu(); goHome(); filterCategory('ملابس'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-gray-800 hover:text-amber-400 transition">👕 قسم الملابس</button>
+                <button onclick="triggerLoading(() => { toggleMenu(); goHome(); filterCategory('إكسسوارات'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-gray-800 hover:text-amber-400 transition">⌚ قسم الإكسسوارات</button>
                 <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="block py-2.5 px-3 rounded-lg text-amber-400 hover:bg-gray-800 transition">📘 تابعنا على فيسبوك</a>
             </nav>
         </div>
@@ -96,7 +112,7 @@
                     </div>
                 </div>
                 <textarea id="new-desc" placeholder="وصف المنتج..." class="w-full p-2 rounded bg-gray-900 border border-gray-700 text-xs mb-3 text-white h-16"></textarea>
-                <button onclick="addProduct()" class="w-full bg-[#febd69] text-gray-900 py-2.5 rounded font-black hover:bg-[#f3a847] transition text-xs">حفظ ونشر المنتج 🚀</button>
+                <button onclick="triggerLoading(addProduct)" class="w-full bg-[#febd69] text-gray-900 py-2.5 rounded font-black hover:bg-[#f3a847] transition text-xs">حفظ ونشر المنتج 🚀</button>
             </div>
             
             <h3 class="text-sm font-bold text-amber-300 mb-2">📋 إدارة المنتجات الحالية:</h3>
@@ -121,7 +137,7 @@
         <div id="home-search-section" class="mb-6 max-w-xl mx-auto">
             <div class="flex shadow-sm">
                 <input type="text" id="search-input" oninput="searchProducts()" placeholder="ابحث عن منتجك المفضلة هنا..." class="w-full py-2.5 px-4 rounded-r-lg bg-white border border-gray-300 text-sm focus:outline-none focus:border-blue-500">
-                <button onclick="searchProducts()" class="bg-[#febd69] hover:bg-[#f3a847] text-gray-900 px-5 rounded-l-lg font-black text-sm flex items-center justify-center transition">
+                <button onclick="triggerLoading(searchProducts)" class="bg-[#febd69] hover:bg-[#f3a847] text-gray-900 px-5 rounded-l-lg font-black text-sm flex items-center justify-center transition">
                     🔍 بحث
                 </button>
             </div>
@@ -137,7 +153,7 @@
         </div>
     </main>
 
-    <!-- نافذة تفاصيل المنتج (مع عداد اختيار الكمية قبل الإضافة أو الشراء) -->
+    <!-- نافذة تفاصيل المنتج -->
     <div id="product-modal" class="fixed inset-0 bg-black/60 hidden z-50 flex items-center justify-center p-3">
         <div class="bg-white text-gray-900 w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center p-3 bg-gray-100 border-b">
@@ -159,7 +175,6 @@
                     <p class="text-[11px] text-gray-500 font-bold mb-1">وصف المنتج:</p>
                     <p id="modal-desc" class="text-xs text-gray-700 bg-gray-50 p-2.5 rounded border mb-3"></p>
                     
-                    <!-- عداد اختيار الكمية للمنتج -->
                     <div class="flex items-center justify-between bg-gray-100 p-2.5 rounded-lg border">
                         <span class="text-xs font-bold text-gray-700">حدد الكمية المطلوبة:</span>
                         <div class="flex items-center gap-2">
@@ -203,7 +218,7 @@
                     <textarea id="client-address" placeholder="العنوان بالتفصيل (المحافظة / المدينة / الشارع)" class="w-full p-2 rounded bg-white border text-xs focus:outline-none focus:border-blue-500 h-16"></textarea>
                 </div>
 
-                <button onclick="checkoutWhatsApp()" class="w-full bg-[#28a745] hover:bg-[#218838] text-white py-3 rounded-lg font-black text-xs shadow transition mb-2 text-center">تأكيد وإرسال الطلب عبر الواتساب 📱</button>
+                <button onclick="triggerLoading(checkoutWhatsApp)" class="w-full bg-[#28a745] hover:bg-[#218838] text-white py-3 rounded-lg font-black text-xs shadow transition mb-2 text-center">تأكيد وإرسال الطلب عبر الواتساب 📱</button>
 
                 <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="w-full bg-[#1877f2] hover:bg-[#165fe6] text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1.5 transition">
                     <span>📘 تابعنا على فيسبوك</span>
@@ -240,6 +255,16 @@
         let currentModalQty = 1;
 
         renderStore();
+
+        // دالة تفعيل تأثير التحميل السلس عند الضغط على أي زرار
+        function triggerLoading(action) {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) overlay.classList.add('active');
+            setTimeout(() => {
+                if (typeof action === 'function') action();
+                if (overlay) overlay.classList.remove('active');
+            }, 400); // نصف ثانية إيحاء بالتحميل الاحترافي
+        }
 
         function toggleMenu() {
             const menu = document.getElementById('side-menu');
@@ -308,7 +333,7 @@
             filtered.forEach(p => {
                 grid.innerHTML += `
                     <div class="product-card bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col justify-between p-2.5">
-                        <div class="cursor-pointer" onclick="openProductModal(${p.id})">
+                        <div class="cursor-pointer" onclick="triggerLoading(() => openProductModal(${p.id}))">
                             <div class="h-36 sm:h-44 bg-gray-50 rounded mb-2 flex items-center justify-center p-1">
                                 <img src="${p.image1 || ''}" alt="${p.name || ''}" class="w-full h-full object-contain">
                             </div>
@@ -318,8 +343,8 @@
                         <div>
                             <p class="text-red-700 font-black text-sm mb-2">${p.price || 0} <span class="text-[10px]">ج.م</span></p>
                             <div class="grid grid-cols-2 gap-1">
-                                <button onclick="addToCartDirect(${p.id})" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1.5 rounded text-[10px] font-black transition">🛒 أضف</button>
-                                <button onclick="buyNowDirect(${p.id})" class="bg-[#febd69] hover:bg-[#f3a847] text-gray-900 py-1.5 rounded text-[10px] font-black transition">⚡ شراء</button>
+                                <button onclick="triggerLoading(() => addToCartDirect(${p.id}))" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1.5 rounded text-[10px] font-black transition">🛒 أضف</button>
+                                <button onclick="triggerLoading(() => buyNowDirect(${p.id}))" class="bg-[#febd69] hover:bg-[#f3a847] text-gray-900 py-1.5 rounded text-[10px] font-black transition">⚡ شراء</button>
                             </div>
                         </div>
                     </div>
@@ -343,8 +368,8 @@
             document.getElementById('modal-img1').src = p.image1;
             document.getElementById('modal-img2').src = p.image2 || p.image1;
             
-            document.getElementById('modal-cart-btn').setAttribute('onclick', `addModalToCart(); closeProductModal();`);
-            document.getElementById('modal-buy-btn').setAttribute('onclick', `modalBuyNow(); closeProductModal();`);
+            document.getElementById('modal-cart-btn').setAttribute('onclick', `triggerLoading(() => { addModalToCart(); closeProductModal(); });`);
+            document.getElementById('modal-buy-btn').setAttribute('onclick', `triggerLoading(() => { modalBuyNow(); closeProductModal(); });`);
 
             document.getElementById('product-modal').classList.remove('hidden');
         }
@@ -457,8 +482,8 @@
                         </td>
                         <td class="py-2">${p.price || 0} ج.م</td>
                         <td class="py-2 flex gap-1">
-                            <button onclick="editProduct(${p.id})" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">تعديل</button>
-                            <button onclick="deleteProduct(${p.id})" class="bg-red-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">حذف</button>
+                            <button onclick="triggerLoading(() => editProduct(${p.id}))" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">تعديل</button>
+                            <button onclick="triggerLoading(() => deleteProduct(${p.id}))" class="bg-red-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">حذف</button>
                         </td>
                     </tr>
                 `;
