@@ -928,4 +928,272 @@
                             <img src="${p.image1 || ''}" class="w-9 h-9 object-contain rounded border bg-white p-0.5 shrink-0">
                             <div>
                                 <span class="truncate w-28 sm:w-32 font-bold text-xs block">${p.name}</span>
-                         
+                                <span class="text-[10px] text-gray-400">الخصم: ${disc}%</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-amber-500 font-black text-xs">${finalP} ج.م</span>
+                            <button onclick="openEditModal('${p.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-md text-[10px] font-bold transition shrink-0">تعديل</button>
+                            <button onclick="deleteProductFromCloud('${p.id}')" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-md text-[10px] font-bold transition shrink-0">حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openEditModal(id) {
+            const p = products.find(item => String(item.id) === String(id));
+            if (!p) return;
+
+            document.getElementById('edit-id').value = p.id;
+            document.getElementById('edit-name').value = p.name;
+            document.getElementById('edit-price').value = p.price;
+            document.getElementById('edit-discount').value = p.discount || 0;
+            document.getElementById('edit-category').value = p.category || 'ملابس';
+            document.getElementById('edit-desc').value = p.desc || '';
+            document.getElementById('edit-image1-file').value = '';
+            document.getElementById('edit-image2-file').value = '';
+
+            document.getElementById('edit-product-modal').classList.remove('hidden');
+            pushModalState('edit-product-modal');
+        }
+
+        function closeEditModal() { closeAllModals(); }
+
+        function saveEditedProduct() {
+            const id = document.getElementById('edit-id').value;
+            const name = document.getElementById('edit-name').value;
+            const price = document.getElementById('edit-price').value;
+            const discount = document.getElementById('edit-discount').value || 0;
+            const category = document.getElementById('edit-category').value;
+            const desc = document.getElementById('edit-desc').value;
+            
+            const img1File = document.getElementById('edit-image1-file').files[0];
+            const img2File = document.getElementById('edit-image2-file').files[0];
+
+            if (!name || !price) {
+                alert('الرجاء إدخال اسم المنتج والسعر على الأقل!');
+                return;
+            }
+
+            const existingProduct = products.find(p => String(p.id) === String(id));
+            if (!existingProduct) return;
+
+            let updatedData = {
+                name: name,
+                price: Number(price),
+                discount: Number(discount),
+                category: category,
+                desc: desc,
+                image1: existingProduct.image1,
+                image2: existingProduct.image2
+            };
+
+            const finishUpdate = () => {
+                db.collection("products").doc(String(id)).update(updatedData)
+                .then(() => {
+                    alert('تم تعديل المنتج بنجاح! ✅');
+                    closeEditModal();
+                })
+                .catch(() => alert('حدث خطأ أثناء الحفظ!'));
+            };
+
+            if (img1File) {
+                const reader1 = new FileReader();
+                reader1.onload = function(e1) {
+                    updatedData.image1 = e1.target.result;
+                    if (img2File) {
+                        const reader2 = new FileReader();
+                        reader2.onload = function(e2) {
+                            updatedData.image2 = e2.target.result;
+                            finishUpdate();
+                        };
+                        reader2.readAsDataURL(img2File);
+                    } else {
+                        finishUpdate();
+                    }
+                };
+                reader1.readAsDataURL(img1File);
+            } else if (img2File) {
+                const reader2 = new FileReader();
+                reader2.onload = function(e2) {
+                    updatedData.image2 = e2.target.result;
+                    finishUpdate();
+                };
+                reader2.readAsDataURL(img2File);
+            } else {
+                finishUpdate();
+            }
+        }
+
+        async function deleteProductFromCloud(id) {
+            if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+                try {
+                    await db.collection("products").doc(String(id)).delete();
+                    alert('تم الحذف بنجاح!');
+                } catch(e) {
+                    alert('خطأ أثناء الحذف!');
+                }
+            }
+        }
+
+        function addToCartDirect(id) {
+            const product = products.find(p => String(p.id) === String(id));
+            if (product) {
+                const existing = cart.find(item => String(item.product.id) === String(id));
+                if (existing) { existing.quantity += 1; } 
+                else { cart.push({ product: product, quantity: 1 }); }
+                updateCartUI();
+                showToast();
+            }
+        }
+
+        function buyNowDirect(id) {
+            addToCartDirect(id);
+            openCheckoutPage();
+        }
+
+        function addModalToCart() {
+            const product = products.find(p => String(p.id) === String(currentModalProductId));
+            if (product) {
+                const existing = cart.find(item => String(item.product.id) === String(currentModalProductId));
+                if (existing) { existing.quantity += currentModalQty; } 
+                else { cart.push({ product: product, quantity: currentModalQty }); }
+                updateCartUI();
+                showToast();
+            }
+        }
+
+        function modalBuyNow() {
+            addModalToCart();
+            closeProductModal();
+            openCheckoutPage();
+        }
+
+        function increaseQty(index) { cart[index].quantity += 1; updateCartUI(); }
+        function decreaseQty(index) {
+            if (cart[index].quantity > 1) { cart[index].quantity -= 1; } 
+            else { cart.splice(index, 1); }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').innerText = totalCount;
+
+            const itemsContainer = document.getElementById('cart-items');
+            if (!itemsContainer) return;
+            itemsContainer.innerHTML = '';
+            let grandTotal = 0;
+
+            if(cart.length === 0) {
+                itemsContainer.innerHTML = '<p class="text-center text-gray-500 py-8 text-xs">سلة المشتريات فارغة حالياً</p>';
+                document.getElementById('cart-total').innerText = '0 ج.م';
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                let unitPrice = calculateFinalPrice(item.product.price, item.product.discount);
+                let itemTotal = unitPrice * item.quantity;
+                grandTotal += itemTotal;
+                itemsContainer.innerHTML += `
+                    <div class="flex justify-between items-center border-b pb-3 text-xs gap-3">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.product.image1 || ''}" class="w-16 h-16 rounded-lg object-contain border inner-box p-1">
+                            <div>
+                                <p class="font-bold text-sm mb-1">${item.product.name || ''}</p>
+                                <p class="text-[#b12704] font-black text-sm">${unitPrice} ج.م × ${item.quantity}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="decreaseQty(${index})" class="custom-card border w-7 h-7 rounded font-black text-sm flex items-center justify-center">-</button>
+                            <span class="font-bold text-sm w-5 text-center">${item.quantity}</span>
+                            <button onclick="increaseQty(${index})" class="custom-card border w-7 h-7 rounded font-black text-sm flex items-center justify-center">+</button>
+                            <button onclick="removeFromCart(${index})" class="text-red-600 font-bold ml-2 text-xs">حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('cart-total').innerText = grandTotal + ' ج.م';
+        }
+
+        function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
+        
+        function openCart() {
+            document.getElementById('cart-modal').classList.remove('hidden');
+            pushModalState('cart-modal');
+        }
+        
+        function closeCart() { closeAllModals(); }
+
+        function openCheckoutPage() {
+            if(cart.length === 0) { alert('السلة فارغة، أضف منتجات أولاً!'); return; }
+            
+            let productsTotal = 0;
+            const summaryContainer = document.getElementById('checkout-summary-items');
+            summaryContainer.innerHTML = '';
+
+            cart.forEach((item) => {
+                let unitPrice = calculateFinalPrice(item.product.price, item.product.discount);
+                let itemTotal = unitPrice * item.quantity;
+                productsTotal += itemTotal;
+                summaryContainer.innerHTML += `
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="font-bold truncate w-48">• ${item.product.name} (×${item.quantity})</span>
+                        <span class="font-black text-[#b12704]">${itemTotal} ج.م</span>
+                    </div>
+                `;
+            });
+
+            let finalGrandTotal = productsTotal + SHIPPING_FEE;
+            document.getElementById('checkout-grand-total').innerText = finalGrandTotal + ' ج.م';
+
+            document.getElementById('cart-modal').classList.add('hidden');
+            document.getElementById('checkout-modal').classList.remove('hidden');
+            pushModalState('checkout-modal');
+        }
+
+        function closeCheckoutPage() { closeAllModals(); }
+
+        function generateOrderText() {
+            const cName = document.getElementById('client-name').value.trim();
+            const cPhone = document.getElementById('client-phone').value.trim();
+            const cAddress = document.getElementById('client-address').value.trim();
+            const cLocation = document.getElementById('client-location').value.trim();
+
+            if(!cName || !cPhone || !cAddress) { 
+                alert('الرجاء إدخال اسمك ورقم الهاتف والعنوان التفصيلي أولاً!'); 
+                return null; 
+            }
+
+            let message = `🛒 *طلب جديد من متجر DROP SHOPPING*\n\n`;
+            message += `👤 *الاسم:* ${cName}\n📞 *الهاتف:* ${cPhone}\n📍 *العنوان:* ${cAddress}\n`;
+            if (cLocation) {
+                message += `🗺️ *رابط اللوكيشن:* ${cLocation}\n`;
+            }
+            message += `\n📦 *المنتجات المطلوبة:*\n`;
+
+            let productsTotal = 0;
+            cart.forEach((item, index) => {
+                let unitPrice = calculateFinalPrice(item.product.price, item.product.discount);
+                let itemTotal = unitPrice * item.quantity;
+                message += `${index + 1}. ${item.product.name} (×${item.quantity}) - ${itemTotal} ج.م\n`;
+                productsTotal += itemTotal;
+            });
+
+            let finalGrandTotal = productsTotal + SHIPPING_FEE;
+            message += `\n───────────────\n`;
+            message += `💰 *الإجمالي النهائي المطلوب (شامل مصاريف الشحن):* ${finalGrandTotal} ج.م`;
+            return message;
+        }
+
+        function checkoutWhatsApp() {
+            const message = generateOrderText();
+            if (message) {
+                window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`, '_blank');
+            }
+        }
+    </script>
+</body>
+</html>
