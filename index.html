@@ -14,13 +14,11 @@
     <style>
         * { font-family: 'Tajawal', sans-serif; }
         
-        /* الوضع الفاتح */
         body.light-theme { background-color: #f3f4f6; color: #111827; }
         body.light-theme .custom-card { background: #ffffff; border-color: #e5e7eb; color: #111827; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         body.light-theme .header-bg { background: #131921; color: #ffffff; }
         body.light-theme .inner-box { background: #f9fafb; border-color: #e5e7eb; color: #1f2937; }
 
-        /* الوضع الداكن */
         body.dark-theme { background-color: #0b0f15; color: #f3f4f6; }
         body.dark-theme .custom-card { background: #131921; border-color: #1f2937; color: #f3f4f6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
         body.dark-theme .header-bg { background: #0d1217; color: #ffffff; border-bottom: 1px solid rgba(254, 189, 105, 0.2); }
@@ -37,21 +35,10 @@
             letter-spacing: 1px;
         }
 
-        .tab-btn {
-            position: relative;
-            padding-bottom: 6px;
-            transition: all 0.2s ease;
-        }
+        .tab-btn { position: relative; padding-bottom: 6px; transition: all 0.2s ease; }
         .tab-btn.active-tab::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 5%;
-            width: 90%;
-            height: 3.5px;
-            background-color: #febd69;
-            border-radius: 4px;
-            box-shadow: 0 0 8px rgba(254, 189, 105, 0.8);
+            content: ''; position: absolute; bottom: 0; left: 5%; width: 90%; height: 3.5px;
+            background-color: #febd69; border-radius: 4px; box-shadow: 0 0 8px rgba(254, 189, 105, 0.8);
         }
 
         #loading-overlay {
@@ -70,13 +57,12 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.4); transition: transform 0.3s ease, opacity 0.3s ease; opacity: 0;
         }
         #toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        
         .thumb-img.active { border-color: #e77600 !important; }
     </style>
 </head>
 <body class="light-theme flex flex-col min-h-screen">
 
-    <!-- شاشة التحميل (محددة لمدة 1.5 ثانية) -->
+    <!-- شاشة التحميل (محددة لمدة 1 ثانية بالضبط) -->
     <div id="loading-overlay">
         <div class="spinner mb-3"></div>
         <p id="loading-text" class="text-sm font-bold text-amber-400">جاري التحميل...</p>
@@ -90,7 +76,6 @@
             <div class="flex items-center gap-3">
                 <button onclick="triggerLoading(toggleMenu)" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1 transition">☰</button>
                 
-                <!-- صورة بروفايل المالك والشعار بدون أي تشوه ببدائية التشغيل -->
                 <div class="flex items-center gap-2.5 cursor-pointer select-none" onclick="handleSecretAdminClick()">
                     <div id="owner-avatar-container" class="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400 bg-gray-800 flex items-center justify-center shrink-0 shadow-lg">
                         <img id="owner-avatar-img" src="" class="w-full h-full object-cover hidden">
@@ -128,11 +113,15 @@
                 <button onclick="closeMenu(); goHome(); filterCategory('ملابس');" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">👕 قسم الملابس</button>
                 <button onclick="closeMenu(); goHome(); filterCategory('أحذية');" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">👟 قسم الأحذية</button>
                 <button onclick="closeMenu(); goHome(); filterCategory('إكسسوارات');" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">⌚ قسم الإكسسوارات</button>
-                <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="block py-2.5 px-3 rounded-lg text-[#febd69] hover:bg-[#232f3e] transition">📘 تابعنا على فيسبوك</a>
             </nav>
         </div>
-        <div class="text-xs text-center text-gray-500 border-t border-gray-800 pt-3">
-            DROP SHOPPING © 2026
+        
+        <!-- كلمة تابعنا على فيسبوك صغيرة بأسفل القائمة -->
+        <div class="border-t border-gray-800 pt-3 text-center">
+            <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-amber-400 hover:underline font-bold">
+                <span>📘 تابعنا على فيسبوك</span>
+            </a>
+            <p class="text-[10px] text-gray-500 mt-2">DROP SHOPPING © 2026</p>
         </div>
     </div>
 
@@ -144,7 +133,6 @@
                 <button onclick="closeSecretModal()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
             </div>
             <div class="p-5 overflow-y-auto space-y-4 text-xs">
-                
                 <div class="inner-box p-3 rounded-xl border">
                     <h4 class="font-bold text-sm text-amber-500 mb-2">🖼️ تغيير صورة بروفايل المالك (تظهر بالهيدر):</h4>
                     <div class="flex items-center gap-3">
@@ -191,7 +179,7 @@
             </div>
         </div>
 
-        <!-- أزرار الفلترة الفورية (بدون تحميل مزعج) -->
+        <!-- أزرار الفلترة الفورية -->
         <div class="flex justify-center gap-6 mb-6 border-b border-gray-200 dark:border-gray-800 pb-3">
             <button id="tab-all" onclick="filterCategory('all');" class="tab-btn active-tab font-black text-xs sm:text-sm px-2 py-1">📋 كل المنتجات</button>
             <button id="tab-best" onclick="filterSpecial('best');" class="tab-btn font-black text-xs sm:text-sm px-2 py-1">🔥 الأكثر مبيعاً</button>
@@ -282,7 +270,7 @@
         </div>
     </div>
 
-    <!-- صفحة الشراء وإتمام الطلب المستقلة (أسلوب أمازون الشيك) -->
+    <!-- صفحة الشراء وإتمام الطلب المستقلة -->
     <div id="checkout-modal" class="fixed inset-0 bg-black/75 backdrop-blur-md hidden z-50 flex items-center justify-center p-3 overflow-y-auto">
         <div class="custom-card w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col my-auto border border-amber-400/30">
             <div class="flex justify-between items-center p-4 bg-gray-900 text-white border-b border-gray-800">
@@ -407,14 +395,14 @@
             loadOwnerAvatar();
         });
 
-        // دالة التحميل المحددة بـ 1.5 ثانية (1500ms)
+        // تحكم دالة التحميل بمدة 1 ثانية (1000ms)
         function triggerLoading(action) {
             const overlay = document.getElementById('loading-overlay');
             if (overlay) overlay.classList.add('active');
             setTimeout(() => {
                 if (typeof action === 'function') action();
                 if (overlay) overlay.classList.remove('active');
-            }, 1500);
+            }, 1000);
         }
 
         function toggleTheme() {
@@ -851,11 +839,10 @@
         
         function closeCart() { closeAllModals(); }
 
-        // فتح صفحة الشراء وإتمام الطلب المنفصلة
+        // فتح صفحة الشراء الشيك وإتمام الطلب بصورة صحيحة
         function openCheckoutPage() {
             if(cart.length === 0) { alert('السلة فارغة، أضف منتجات أولاً!'); return; }
             
-            // تعبئة ملخص الطلب
             const summaryContainer = document.getElementById('checkout-summary-items');
             summaryContainer.innerHTML = '';
             let grandTotal = 0;
@@ -873,7 +860,8 @@
 
             document.getElementById('checkout-summary-total').innerText = grandTotal + ' ج.م';
 
-            closeCart();
+            // إغلاق السلة وفتح صفحة الشراء المستقلة
+            document.getElementById('cart-modal').classList.add('hidden');
             document.getElementById('checkout-modal').classList.remove('hidden');
             pushModalState('checkout-modal');
         }
