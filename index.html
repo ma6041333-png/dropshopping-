@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DROP SHOPPING - المتجر الرسمي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
     
     <!-- مكتبات Firebase السحابية -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -27,6 +27,20 @@
         .product-card { transition: all 0.2s ease-in-out; border-radius: 8px; }
         .product-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         
+        /* تصميم اسم المتجر بالخط المائل الفاخر */
+        .fancy-italic-brand {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff2a3 0%, #febd69 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            transform: skewX(-6deg);
+            display: inline-block;
+            text-shadow: 0 2px 10px rgba(254, 189, 105, 0.2);
+        }
+
         .gold-brand-text {
             background: linear-gradient(135deg, #f3a847 0%, #febd69 50%, #d4af37 100%);
             -webkit-background-clip: text;
@@ -108,10 +122,11 @@
                 <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1 transition hover:opacity-80">☰</button>
             </div>
 
+            <!-- اسم المتجر المائل الشيك مع صورة البروفايل -->
             <div class="flex items-center gap-3 cursor-pointer select-none" onclick="handleSecretAdminClick()">
                 <div class="flex flex-col text-left sm:text-right">
-                    <span class="text-lg sm:text-xl uppercase gold-brand-text leading-tight">DROP</span>
-                    <span class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">SHOPPING</span>
+                    <span class="text-xl sm:text-2xl fancy-italic-brand leading-tight">Drop</span>
+                    <span class="text-[9px] sm:text-[10px] uppercase tracking-widest text-amber-300 font-bold -mt-1">SHOPPING</span>
                 </div>
 
                 <div id="owner-avatar-container" class="w-13 h-13 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-amber-400 bg-gray-900 flex items-center justify-center shrink-0 shadow-xl">
@@ -364,7 +379,7 @@
     </div>
 
     <footer class="header-bg py-6 text-center text-xs mt-auto flex flex-col items-center gap-1.5">
-        <span class="gold-brand-text text-base uppercase">DROP SHOPPING</span>
+        <span class="fancy-italic-brand text-lg">Drop SHOPPING</span>
         <p class="text-gray-400">جميع حقوق الطبع والنشر محفوظة © 2026</p>
     </footer>
 
@@ -963,7 +978,7 @@
             const cLocation = document.getElementById('client-location').value.trim();
 
             if(!cName || !cPhone || !cAddress) { 
-                alert('الرجاء إدخال اسم الرقم ورقم الهاتف والعنوان التفصيلي أولاً!'); 
+                alert('الرجاء إدخال اسمك ورقم الهاتف والعنوان التفصيلي أولاً!'); 
                 return null; 
             }
 
