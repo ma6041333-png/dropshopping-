@@ -37,7 +37,6 @@
             letter-spacing: 1px;
         }
 
-        /* تنسيق زرار الفلترة المكون من شريط أصفر تحت الخيار النشط */
         .tab-btn {
             position: relative;
             padding-bottom: 6px;
@@ -84,29 +83,26 @@
 
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
 
-    <!-- الهيدر الرئيسي مع صورة بروفايل المالك وشعار المتجر -->
+    <!-- الهيدر المطور (قائمة + بروفايل كبير + شعار + سلة) -->
     <header class="header-bg sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1 transition">☰</button>
-                
-                <!-- صورة بروفايل المالك وشعار المتجر -->
-                <div class="flex items-center gap-2 cursor-pointer select-none" onclick="handleSecretAdminClick()">
-                    <div id="owner-avatar-container" class="w-9 h-9 rounded-full overflow-hidden border-2 border-amber-400 bg-gray-800 flex items-center justify-center shrink-0">
+                <!-- زر القائمة مع صورة البروفايل الكبيرة بجانبه -->
+                <button onclick="toggleMenu()" class="flex items-center gap-2.5 focus:outline-none p-1 group">
+                    <div class="relative w-11 h-11 rounded-full overflow-hidden border-2 border-amber-400 bg-gray-800 flex items-center justify-center shrink-0 shadow-md">
                         <img id="owner-avatar-img" src="" class="w-full h-full object-cover hidden">
-                        <span id="owner-avatar-placeholder" class="text-xs font-bold text-amber-400">👑</span>
+                        <span id="owner-avatar-placeholder" class="text-sm font-bold text-amber-400">👑</span>
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-lg sm:text-xl uppercase gold-brand-text leading-tight">DROP</span>
-                        <span class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">SHOPPING</span>
-                    </div>
+                    <span class="text-[#febd69] text-2xl font-bold group-hover:text-white transition">☰</span>
+                </button>
+
+                <div class="cursor-pointer flex flex-col select-none" onclick="handleSecretAdminClick()">
+                    <span class="text-lg sm:text-xl uppercase gold-brand-text leading-tight">DROP</span>
+                    <span class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">SHOPPING</span>
                 </div>
             </div>
 
             <div class="flex items-center gap-2">
-                <button onclick="toggleTheme()" id="theme-toggle-btn" class="bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-3 py-1.5 rounded-lg text-amber-400 text-xs font-bold transition shadow-sm">
-                    🌙 الوضع الداكن
-                </button>
                 <button onclick="triggerLoading(openCart)" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-3.5 py-1.5 rounded-md text-[#febd69] font-bold transition">
                     🛒 <span id="cart-count" class="bg-[#febd69] text-gray-950 text-xs px-1.5 py-0.2 rounded-full font-black">0</span>
                 </button>
@@ -114,7 +110,7 @@
         </div>
     </header>
 
-    <!-- القائمة الجانبية -->
+    <!-- القائمة الجانبية (تحتوي على الثيم ومميزات المتجر) -->
     <div id="side-menu" class="fixed inset-y-0 right-0 bg-[#131921] text-white w-[280px] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between p-5 border-l border-gray-800">
         <div>
             <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
@@ -122,6 +118,12 @@
                 <button onclick="closeMenu()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
             </div>
             <nav class="space-y-3 font-bold text-sm">
+                <!-- زرار تبديل الوضع الداكن والفاتح مع التحميل -->
+                <button onclick="closeMenu(); triggerLoading(() => toggleTheme())" class="w-full text-right py-2.5 px-3 rounded-lg bg-[#232f3e] text-amber-400 hover:bg-[#374151] transition flex items-center justify-between">
+                    <span id="menu-theme-text">🌙 الوضع الداكن</span>
+                    <span>⚡</span>
+                </button>
+
                 <button onclick="closeMenu(); triggerLoading(() => { goHome(); filterCategory('all'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">📋 الرئيسية وكل المنتجات</button>
                 <button onclick="closeMenu(); triggerLoading(() => { goHome(); filterCategory('ملابس'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">👕 قسم الملابس</button>
                 <button onclick="closeMenu(); triggerLoading(() => { goHome(); filterCategory('أحذية'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">👟 قسم الأحذية</button>
@@ -134,7 +136,7 @@
         </div>
     </div>
 
-    <!-- لوحة تحكم الأدمن السرية (محمية بكلمة المرور 1695) -->
+    <!-- لوحة تحكم الأدمن السرية (1695) -->
     <div id="admin-secret-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3">
         <div class="custom-card w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center p-4 bg-gray-900 text-white border-b border-gray-800">
@@ -143,7 +145,6 @@
             </div>
             <div class="p-5 overflow-y-auto space-y-4 text-xs">
                 
-                <!-- إدارة صورة بروفايل المالك -->
                 <div class="inner-box p-3 rounded-xl border">
                     <h4 class="font-bold text-sm text-amber-500 mb-2">🖼️ تغيير صورة بروفايل المالك (تظهر بالهيدر):</h4>
                     <div class="flex items-center gap-3">
@@ -153,7 +154,6 @@
                     </div>
                 </div>
 
-                <!-- نموذج إضافة منتج جديد -->
                 <div class="inner-box p-3 rounded-xl border">
                     <h4 class="font-bold text-sm text-amber-500 mb-3">➕ إضافة منتج جديد:</h4>
                     <div class="space-y-2">
@@ -191,12 +191,11 @@
             </div>
         </div>
 
-        <!-- الأزرار السريعة مع شريط برتقالي سفلي للزر النشط -->
-        <div class="flex flex-wrap justify-center gap-3 mb-6 border-b border-gray-200 dark:border-gray-800 pb-3">
-            <button id="tab-all" onclick="triggerLoading(() => { currentTab = 'all'; filterCategory('all'); })" class="tab-btn active-tab font-black text-xs sm:text-sm px-3 py-1">📋 كل المنتجات</button>
-            <button id="tab-best" onclick="triggerLoading(() => { currentTab = 'best'; filterSpecial('best'); })" class="tab-btn font-black text-xs sm:text-sm px-3 py-1">🔥 الأكثر مبيعاً</button>
-            <button id="tab-new" onclick="triggerLoading(() => { currentTab = 'new'; filterSpecial('new'); })" class="tab-btn font-black text-xs sm:text-sm px-3 py-1">✨ وصل حديثاً</button>
-            <button id="tab-shoes" onclick="triggerLoading(() => { currentTab = 'shoes'; filterCategory('أحذية'); })" class="tab-btn font-black text-xs sm:text-sm px-3 py-1">👟 قسم الأحذية</button>
+        <!-- الأزرار السريعة الواجهة منظمة -->
+        <div class="flex justify-center gap-6 mb-6 border-b border-gray-200 dark:border-gray-800 pb-3">
+            <button id="tab-all" onclick="triggerLoading(() => { currentTab = 'all'; filterCategory('all'); })" class="tab-btn active-tab font-black text-xs sm:text-sm px-2 py-1">📋 كل المنتجات</button>
+            <button id="tab-best" onclick="triggerLoading(() => { currentTab = 'best'; filterSpecial('best'); })" class="tab-btn font-black text-xs sm:text-sm px-2 py-1">🔥 الأكثر مبيعاً</button>
+            <button id="tab-new" onclick="triggerLoading(() => { currentTab = 'new'; filterSpecial('new'); })" class="tab-btn font-black text-xs sm:text-sm px-2 py-1">✨ وصل حديثاً</button>
         </div>
 
         <div class="flex justify-between items-center mb-4 border-b border-gray-300 dark:border-gray-800 pb-2">
@@ -327,7 +326,6 @@
         let logoClickCount = 0;
         let logoClickTimer = null;
 
-        // إدارة زر الرجوع في الموبايل لجميع القوائم والنوافذ
         window.addEventListener('popstate', function(e) {
             closeAllModals(false);
         });
@@ -374,13 +372,12 @@
         function applyTheme(theme) {
             document.body.className = theme + '-theme flex flex-col min-h-screen';
             localStorage.setItem('store_theme', theme);
-            const btn = document.getElementById('theme-toggle-btn');
-            if(btn) {
-                btn.innerHTML = theme === 'light' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
+            const menuThemeText = document.getElementById('menu-theme-text');
+            if(menuThemeText) {
+                menuThemeText.innerHTML = theme === 'light' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
             }
         }
 
-        // تحكم صورة بروفايل المالك من فايبربيز
         function loadOwnerAvatar() {
             db.collection("settings").doc("owner_profile").onSnapshot((doc) => {
                 if (doc.exists && doc.data().avatarUrl) {
@@ -494,7 +491,6 @@
         function filterCategory(cat) {
             currentCategory = cat;
             if (cat === 'all') updateTabUI('tab-all');
-            else if (cat === 'أحذية') updateTabUI('tab-shoes');
             else updateTabUI('');
             
             document.getElementById('section-title').innerText = cat === 'all' ? 'جميع المنتجات المعروضة' : `قسم: ${cat}`;
