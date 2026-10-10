@@ -369,7 +369,7 @@
                     <div class="flex justify-between items-center font-black text-base pt-1">
                         <div class="flex flex-col">
                             <span>المبلغ الإجمالي المطلوب:</span>
-                            <span class="text-[10px] text-amber-500 font-normal mt-0.5">*(شامل مصاريف الشحن)*</span>
+                            <span class="text-[10px] text-amber-500 font-normal mt-0.5">*(شامل التوصيل)*</span>
                         </div>
                         <span id="checkout-grand-total" class="text-[#b12704]">0 ج.م</span>
                     </div>
@@ -418,7 +418,6 @@
     <script>
         const ADMIN_PASSWORD = "1695";
         const WHATSAPP_PHONE = "201550795100";
-        const SHIPPING_FEE = 50; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyA6hqWuT6ttYSntde1qumisu6",
@@ -477,7 +476,6 @@
             let newLeft = initialLeft + deltaX;
             let newTop = initialTop + deltaY;
 
-            // عدم الخروج خارج حدود الشاشة
             const maxLeft = window.innerWidth - cartBtn.offsetWidth - 10;
             const maxTop = window.innerHeight - cartBtn.offsetHeight - 10;
 
@@ -1146,8 +1144,7 @@
                 `;
             });
 
-            let finalGrandTotal = productsTotal + SHIPPING_FEE;
-            document.getElementById('checkout-grand-total').innerText = finalGrandTotal + ' ج.م';
+            document.getElementById('checkout-grand-total').innerText = productsTotal + ' ج.م';
 
             document.getElementById('cart-modal').classList.add('hidden');
             document.getElementById('checkout-modal').classList.remove('hidden');
@@ -1182,9 +1179,8 @@
                 productsTotal += itemTotal;
             });
 
-            let finalGrandTotal = productsTotal + SHIPPING_FEE;
             message += `\n───────────────\n`;
-            message += `💰 *الإجمالي النهائي المطلوب (شامل مصاريف الشحن):* ${finalGrandTotal} ج.م`;
+            message += `💰 *المبلغ الإجمالي المطلوب:* ${productsTotal} ج.م`;
             return message;
         }
 
