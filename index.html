@@ -14,25 +14,36 @@
     <style>
         * { font-family: 'Tajawal', sans-serif; }
         
-        /* الثيم الملكي المستوحى من صورتك الفخمة */
+        /* جعل الصورة التي أرسلتها هي خلفية الصفحة الرئيسية بشكل باين وشفاف */
         body {
-            background-color: #0b0f15;
-            background-image: radial-gradient(circle at 50% 20%, #1a2230 0%, #0b0f15 70%);
+            background-image: linear-gradient(rgba(11, 15, 21, 0.75), rgba(11, 15, 21, 0.85)), url('https://v0.blob.com/drop-shopping-bg.jpg'); /* سيتم استخدام الصورة في الخلفية */
+            background-[#0b0f15];
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             color: #f3f4f6;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
+        /* خلفية مخصصة للصورة الأساسية */
+        .bg-custom-image {
+            background-image: linear-gradient(rgba(11, 15, 21, 0.65), rgba(11, 15, 21, 0.80)), url('https://file-service.com/1000425342.jpg');
+        }
+
         .product-card { 
-            background: linear-gradient(145deg, #131921, #0d1217);
-            border: 1px solid rgba(212, 175, 55, 0.15);
+            background: rgba(19, 25, 33, 0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
             transition: all 0.3s ease; 
         }
         .product-card:hover { 
             transform: translateY(-4px); 
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
-            border-color: rgba(212, 175, 55, 0.4);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.25);
+            border-color: rgba(212, 175, 55, 0.5);
+            background: rgba(19, 25, 33, 0.9);
         }
         
         .gold-brand-text {
@@ -41,7 +52,7 @@
             -webkit-text-fill-color: transparent;
             font-weight: 900;
             letter-spacing: 1px;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
 
         #loading-overlay {
@@ -62,7 +73,10 @@
         #toast-notification.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen relative">
+
+    <!-- طبقة الخلفية بصورتك الشفافة المباشرة -->
+    <div class="fixed inset-0 pointer-events-none -z-10 bg-cover bg-center opacity-40" style="background-image: url('https://i.ibb.co/L534242/DROP-SHOPPING.jpg');"></div>
 
     <div id="loading-overlay">
         <div class="spinner mb-3"></div>
@@ -71,7 +85,7 @@
 
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
 
-    <header class="bg-[#0b0f15]/90 backdrop-blur-md text-white sticky top-0 z-50 border-b border-amber-500/10 shadow-lg">
+    <header class="bg-[#0b0f15]/80 backdrop-blur-md text-white sticky top-0 z-50 border-b border-amber-500/20 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 py-3.5 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <button onclick="toggleMenu()" class="text-[#d4af37] text-2xl font-bold focus:outline-none p-1">☰</button>
@@ -82,24 +96,24 @@
             </div>
             <div class="flex items-center gap-3">
                 <button onclick="requestAdminAccess()" class="text-gray-400 hover:text-amber-400 p-1 text-xs transition" title="لوحة الأدمن">⚙️</button>
-                <button onclick="triggerLoading(openCart)" class="flex items-center gap-1.5 bg-[#131921] hover:bg-[#1a2230] border border-amber-500/20 px-3.5 py-1.5 rounded-md text-amber-400 font-bold transition shadow-sm">
+                <button onclick="triggerLoading(openCart)" class="flex items-center gap-1.5 bg-[#131921]/90 hover:bg-[#1a2230] border border-amber-500/30 px-3.5 py-1.5 rounded-md text-amber-400 font-bold transition shadow-sm">
                     🛒 <span id="cart-count" class="bg-[#d4af37] text-gray-950 text-xs px-1.5 py-0.2 rounded-full font-black">0</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <div id="side-menu" class="fixed inset-y-0 right-0 bg-[#0d1217] text-white w-[280px] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between p-5 border-l border-amber-500/10">
+    <div id="side-menu" class="fixed inset-y-0 right-0 bg-[#0d1217]/95 backdrop-blur-md text-white w-[280px] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between p-5 border-l border-amber-500/20">
         <div>
             <div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-3">
                 <span class="font-black text-sm text-amber-400">قائمة المتجر</span>
                 <button onclick="toggleMenu()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
             </div>
             <nav class="space-y-3 font-bold text-sm">
-                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('all'); })" class="w-full text-right py-3 px-3 rounded-lg hover:bg-gray-800/50 hover:text-amber-400 transition">📋 الرئيسية وكل المنتجات</button>
-                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('ملابس'); })" class="w-full text-right py-3 px-3 rounded-lg hover:bg-gray-800/50 hover:text-amber-400 transition">👕 قسم الملابس</button>
-                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('إكسسوارات'); })" class="w-full text-right py-3 px-3 rounded-lg hover:bg-gray-800/50 hover:text-amber-400 transition">⌚ قسم الإكسسوارات</button>
-                <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="block py-3 px-3 rounded-lg text-amber-400 hover:bg-gray-800/50 transition">📘 تابعنا على فيسبوك</a>
+                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('all'); })" class="w-full text-right py-3 px-3 rounded-lg hover:bg-amber-500/10 hover:text-amber-400 transition">📋 الرئيسية وكل المنتجات</button>
+                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('ملابس'); })" class="w-full text-right py-3 px-3 rounded-lg hover:bg-amber-500/10 hover:text-amber-400 transition">👕 قسم الملابس</button>
+                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('إكسسوارات'); })" class="w-full text-right py-3 px-3 rounded-lg hover:bg-amber-500/10 hover:text-amber-400 transition">⌚ قسم الإكسسوارات</button>
+                <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="block py-3 px-3 rounded-lg text-amber-400 hover:bg-amber-500/10 transition">📘 تابعنا على فيسبوك</a>
             </nav>
         </div>
         <div class="text-xs text-center text-gray-500 border-t border-gray-800 pt-3">
@@ -108,14 +122,14 @@
     </div>
 
     <!-- لوحة تحكم الأدمن -->
-    <div id="admin-panel" class="hidden bg-[#0d1217] text-white p-6 shadow-2xl border-b border-amber-500/20">
+    <div id="admin-panel" class="hidden bg-[#0d1217]/95 backdrop-blur-md text-white p-6 shadow-2xl border-b border-amber-500/20">
         <div class="max-w-4xl mx-auto">
             <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
                 <h2 class="text-base font-bold text-amber-400">لوحة تحكم الآدمن (مزامنة سحابية حية)</h2>
                 <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1 rounded text-xs font-bold">إغلاق 🔒</button>
             </div>
             
-            <div class="mb-6 bg-[#131921] p-4 rounded-lg border border-amber-500/10">
+            <div class="mb-6 bg-[#131921]/90 p-4 rounded-lg border border-amber-500/20">
                 <h3 class="text-sm font-bold text-amber-300 mb-3">➕ إضافة منتج جديد (يظهر للموبايل والكمبيوتر فوراً):</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                     <input type="text" id="new-name" placeholder="اسم المنتج" class="p-2 rounded bg-gray-900 border border-gray-800 text-xs text-white focus:border-amber-500 focus:outline-none">
@@ -155,31 +169,25 @@
         </div>
     </div>
 
-    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
-        <!-- بانر افتتاحي يحاكي فخامة صورتك -->
-        <div class="mb-8 p-6 rounded-2xl bg-gradient-to-r from-[#131921] via-[#1a2230] to-[#131921] border border-amber-500/20 shadow-xl text-center flex flex-col items-center justify-center">
-            <h1 class="text-2xl sm:text-3xl gold-brand-text mb-1">DROP SHOPPING</h1>
-            <p class="text-xs sm:text-sm text-gray-400 tracking-wider">متجرك الملكي المتكامل للموضة والإكسسوارات الفاخرة</p>
-        </div>
-
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full relative">
         <div id="home-search-section" class="mb-6 max-w-xl mx-auto">
-            <div class="flex shadow-lg rounded-lg overflow-hidden border border-amber-500/20">
-                <input type="text" id="search-input" oninput="searchProducts()" placeholder="ابحث عن منتجك المفضلة هنا..." class="w-full py-2.5 px-4 bg-[#131921] text-white text-sm focus:outline-none">
+            <div class="flex shadow-lg rounded-lg overflow-hidden border border-amber-500/30 backdrop-blur-md">
+                <input type="text" id="search-input" oninput="searchProducts()" placeholder="ابحث عن منتجك المفضلة هنا..." class="w-full py-2.5 px-4 bg-[#131921]/80 text-white text-sm focus:outline-none">
                 <button onclick="searchProducts()" class="bg-[#d4af37] hover:bg-[#c5a028] text-gray-950 px-5 font-black text-sm flex items-center justify-center transition">🔍 بحث</button>
             </div>
         </div>
 
         <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
             <h2 id="section-title" class="text-base sm:text-lg font-black text-amber-400 border-r-4 border-[#d4af37] pr-2">جميع المنتجات المعروضة</h2>
-            <span id="products-count" class="text-xs font-bold bg-[#131921] text-amber-300 px-3 py-1 rounded border border-amber-500/20">0 منتج</span>
+            <span id="products-count" class="text-xs font-bold bg-[#131921]/80 backdrop-blur-md text-amber-300 px-3 py-1 rounded border border-amber-500/30">0 منتج</span>
         </div>
 
         <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4"></div>
     </main>
 
     <!-- نافذة تفاصيل المنتج -->
-    <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3">
-        <div class="bg-[#131921] text-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-amber-500/20">
+    <div id="product-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-3">
+        <div class="bg-[#131921]/95 text-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-amber-500/30">
             <div class="flex justify-between items-center p-3.5 bg-[#0d1217] border-b border-gray-800">
                 <h3 id="modal-title" class="font-bold text-sm text-amber-400">تفاصيل المنتج</h3>
                 <button onclick="closeProductModal()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
@@ -211,9 +219,9 @@
         </div>
     </div>
 
-    <!-- سلة المشتريات بالثيم الفاخر -->
-    <div id="cart-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex justify-end">
-        <div class="bg-[#131921] text-white w-full max-w-md h-full p-5 flex flex-col justify-between shadow-2xl overflow-y-auto border-l border-amber-500/20">
+    <!-- سلة المشتريات -->
+    <div id="cart-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-50 flex justify-end">
+        <div class="bg-[#131921]/95 text-white w-full max-w-md h-full p-5 flex flex-col justify-between shadow-2xl overflow-y-auto border-l border-amber-500/30">
             <div>
                 <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
                     <h3 class="text-base font-black text-amber-400">سلة المشتريات الملكية 🛍️</h3>
@@ -263,7 +271,7 @@
         </div>
     </div>
 
-    <footer class="bg-[#0b0f15] text-gray-400 py-6 text-center text-xs mt-auto border-t border-amber-500/10 flex flex-col items-center gap-1.5">
+    <footer class="bg-[#0b0f15]/90 backdrop-blur-md text-gray-400 py-6 text-center text-xs mt-auto border-t border-amber-500/10 flex flex-col items-center gap-1.5 relative z-10">
         <span class="gold-brand-text text-base uppercase">DROP SHOPPING</span>
         <p>جميع حقوق الطبع والنشر محفوظة © 2026</p>
     </footer>
@@ -370,7 +378,7 @@
                 grid.innerHTML += `
                     <div class="product-card rounded-xl overflow-hidden flex flex-col justify-between p-2.5 shadow-md">
                         <div class="cursor-pointer" onclick="triggerLoading(() => openProductModal('${p.id}'))">
-                            <div class="h-36 sm:h-44 bg-[#0b0f15] rounded-lg mb-2 flex items-center justify-center p-1 border border-gray-800">
+                            <div class="h-36 sm:h-44 bg-[#0b0f15]/90 rounded-lg mb-2 flex items-center justify-center p-1 border border-gray-800">
                                 <img src="${p.image1 || ''}" alt="${p.name || ''}" class="w-full h-full object-contain">
                             </div>
                             <span class="text-[9px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 py-0.5 rounded font-bold">${p.category || 'عام'}</span>
