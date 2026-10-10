@@ -27,7 +27,6 @@
         .product-card { transition: all 0.2s ease-in-out; border-radius: 8px; }
         .product-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
         
-        /* تصميم اسم المتجر بالخط المائل الفاخر */
         .fancy-italic-brand {
             font-family: 'Playfair Display', serif;
             font-style: italic;
@@ -45,7 +44,6 @@
             background-color: #febd69; border-radius: 4px; box-shadow: 0 0 8px rgba(254, 189, 105, 0.8);
         }
 
-        /* تنسيق زر السلة العايم والثابت */
         #floating-cart-btn {
             position: fixed;
             bottom: 25px;
@@ -90,7 +88,6 @@
 </head>
 <body class="light-theme flex flex-col min-h-screen overflow-x-hidden">
 
-    <!-- شاشة التحميل -->
     <div id="loading-overlay">
         <div class="spinner mb-2"></div>
         <p id="loading-text" class="text-xs font-bold text-amber-400">جاري التحميل...</p>
@@ -98,21 +95,17 @@
 
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
 
-    <!-- زر سلة المشتريات العايم -->
     <div id="floating-cart-btn" onclick="triggerLoading(openCart)">
         <span class="text-lg">🛒</span>
         <span class="text-xs bg-gray-950 text-amber-400 px-2 py-0.5 rounded-full font-black" id="cart-count">0</span>
     </div>
 
-    <!-- الهيدر الرئيسي الاحترافي -->
     <header class="header-bg sticky top-0 z-40 shadow-lg w-full">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-            
             <div class="flex items-center gap-3">
                 <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1 transition hover:opacity-80">☰</button>
             </div>
 
-            <!-- اسم المتجر المائل الشيك مع صورة البروفايل المحكومة بتصميم ثابت -->
             <div class="flex items-center gap-2 sm:gap-3 cursor-pointer select-none" onclick="handleSecretAdminClick()">
                 <div class="flex flex-col text-left sm:text-right">
                     <span class="text-lg sm:text-2xl fancy-italic-brand leading-none">Drop</span>
@@ -124,11 +117,10 @@
                     <span id="owner-avatar-placeholder" class="text-lg font-bold text-amber-400">👑</span>
                 </div>
             </div>
-
         </div>
     </header>
 
-    <!-- القائمة الجانبية (مضبوطة أقصى اليمين) -->
+    <!-- القائمة الجانبية -->
     <div id="side-menu" class="fixed inset-y-0 right-0 bg-[#131921] text-white w-[280px] max-w-[80vw] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between p-5 border-l border-gray-800">
         <div>
             <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
@@ -167,7 +159,7 @@
             </div>
             <div class="p-5 overflow-y-auto space-y-4 text-xs">
                 <div class="inner-box p-3 rounded-xl border">
-                    <h4 class="font-bold text-sm text-amber-500 mb-2">🖼️ تغيير صورة بروفايل المالك (تظهر بالهيدر):</h4>
+                    <h4 class="font-bold text-sm text-amber-500 mb-2">🖼️ تغيير صورة بروفايل المالك:</h4>
                     <div class="flex items-center gap-3">
                         <input type="file" id="owner-avatar-file" accept="image/*" class="w-full p-1 text-[10px] border rounded bg-white dark:bg-gray-800">
                         <button onclick="uploadOwnerAvatar()" class="bg-blue-600 text-white px-3 py-1.5 rounded font-bold shrink-0">حفظ</button>
@@ -181,7 +173,7 @@
                         <input type="text" id="new-name" placeholder="اسم المنتج" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
                         <div class="grid grid-cols-2 gap-2">
                             <input type="number" id="new-price" placeholder="السعر الأساسي (ج.م)" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-                            <input type="number" id="new-discount" placeholder="نسبة الخصم % (اختياري مثل 10)" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                            <input type="number" id="new-discount" placeholder="نسبة الخصم % (مثل 10)" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
                         </div>
                         <select id="new-category" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-bold">
                             <option value="ملابس">ملابس</option>
@@ -199,9 +191,53 @@
                 </div>
 
                 <div class="inner-box p-3 rounded-xl border">
-                    <h4 class="font-bold text-sm text-amber-500 mb-2">📋 المنتجات الحالية (للحذف):</h4>
+                    <h4 class="font-bold text-sm text-amber-500 mb-2">📋 إدارة المنتجات الحالية (تعديل أو حذف):</h4>
                     <div id="admin-products-list" class="space-y-2 max-h-56 overflow-y-auto"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل المنتج للأدمن -->
+    <div id="edit-product-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm hidden z-[60] flex items-center justify-center p-3">
+        <div class="custom-card w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center p-4 bg-gray-900 text-white border-b border-gray-800">
+                <h3 class="font-bold text-sm text-amber-400">✏️ تعديل بيانات المنتج</h3>
+                <button onclick="closeEditModal()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
+            </div>
+            <div class="p-5 overflow-y-auto space-y-3 text-xs">
+                <input type="hidden" id="edit-id">
+                <div>
+                    <label class="block font-bold mb-1">اسم المنتج:</label>
+                    <input type="text" id="edit-name" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block font-bold mb-1">السعر (ج.م):</label>
+                        <input type="number" id="edit-price" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">نسبة الخصم %:</label>
+                        <input type="number" id="edit-discount" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold mb-1">القسم:</label>
+                    <select id="edit-category" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-bold">
+                        <option value="ملابس">ملابس</option>
+                        <option value="أحذية">أحذية 👟</option>
+                        <option value="إكسسوارات">إكسسوارات</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="block text-[10px] mb-1 font-bold">تغيير الصورة الرئيسية (اختياري):</label><input type="file" id="edit-image1-file" accept="image/*" class="w-full p-1 text-[10px]"></div>
+                    <div><label class="block text-[10px] mb-1 font-bold">تغيير الصورة الثانية (اختياري):</label><input type="file" id="edit-image2-file" accept="image/*" class="w-full p-1 text-[10px]"></div>
+                </div>
+                <div>
+                    <label class="block font-bold mb-1">وصف المنتج:</label>
+                    <textarea id="edit-desc" class="w-full p-2 rounded border text-xs h-16 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"></textarea>
+                </div>
+                <button onclick="triggerLoading(saveEditedProduct)" class="w-full bg-[#28a745] hover:bg-[#218838] text-white py-2.5 rounded-lg font-black transition">حفظ التعديلات ✅</button>
             </div>
         </div>
     </div>
@@ -209,8 +245,8 @@
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
         <div id="home-search-section" class="mb-5 max-w-xl mx-auto">
             <div class="flex shadow-sm rounded-lg overflow-hidden border custom-card">
-                <input type="text" id="search-input" oninput="searchProducts()" placeholder="ابحث عن منتجك المفضلة هنا..." class="w-full py-2.5 px-4 bg-transparent text-sm focus:outline-none">
-                <button onclick="searchProducts()" class="bg-[#febd69] text-gray-950 px-5 font-black text-sm flex items-center justify-center transition">🔍 بحث</button>
+                <input type="text" id="search-input" oninput="liveSearchProducts()" placeholder="ابحث عن منتجك المفضلة هنا..." class="w-full py-2.5 px-4 bg-transparent text-sm focus:outline-none">
+                <button onclick="liveSearchProducts()" class="bg-[#febd69] text-gray-950 px-5 font-black text-sm flex items-center justify-center transition">🔍 بحث</button>
             </div>
         </div>
 
@@ -308,7 +344,7 @@
         </div>
     </div>
 
-    <!-- صفحة الشراء وإتمام الطلب المنفصلة -->
+    <!-- صفحة الشراء وإتمام الطلب -->
     <div id="checkout-modal" class="fixed inset-0 bg-black/75 backdrop-blur-md hidden z-50 flex items-center justify-center p-3 overflow-y-auto">
         <div class="custom-card w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col my-auto border border-amber-400/30">
             <div class="flex justify-between items-center p-4 bg-gray-900 text-white border-b border-gray-800">
@@ -403,6 +439,7 @@
         let currentModalQty = 1;
         let logoClickCount = 0;
         let logoClickTimer = null;
+        let searchTimeout = null;
 
         window.addEventListener('popstate', function(e) {
             closeAllModals(false);
@@ -421,7 +458,7 @@
                 isAnyOpen = true;
             }
 
-            const modals = ['cart-modal', 'product-modal', 'zoom-modal', 'admin-secret-modal', 'checkout-modal'];
+            const modals = ['cart-modal', 'product-modal', 'zoom-modal', 'admin-secret-modal', 'edit-product-modal', 'checkout-modal'];
             modals.forEach(mId => {
                 const el = document.getElementById(mId);
                 if (el && !el.classList.contains('hidden')) {
@@ -596,9 +633,17 @@
             renderProductsList(filtered, grid);
         }
 
-        function searchProducts() {
-            const query = document.getElementById('search-input').value.toLowerCase().trim();
-            renderStore(query);
+        // دالة البحث اللحظي مع محاكاة التحميل مع كل حرف
+        function liveSearchProducts() {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) overlay.classList.add('active');
+
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const query = document.getElementById('search-input').value.toLowerCase().trim();
+                renderStore(query);
+                if (overlay) overlay.classList.remove('active');
+            }, 300); // تأخير بسيط 300 ملي ثانية لإعطاء تأثير البحث الذكي
         }
 
         function renderStore(searchQuery = '') {
@@ -821,13 +866,99 @@
                                 <span class="text-[10px] text-gray-400">الخصم: ${disc}%</span>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1.5">
                             <span class="text-amber-500 font-black text-xs">${finalP} ج.م</span>
-                            <button onclick="deleteProductFromCloud('${p.id}')" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded-md text-[10px] font-bold transition shrink-0">حذف</button>
+                            <button onclick="openEditModal('${p.id}')" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-md text-[10px] font-bold transition shrink-0">تعديل</button>
+                            <button onclick="deleteProductFromCloud('${p.id}')" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-md text-[10px] font-bold transition shrink-0">حذف</button>
                         </div>
                     </div>
                 `;
             });
+        }
+
+        function openEditModal(id) {
+            const p = products.find(item => String(item.id) === String(id));
+            if (!p) return;
+
+            document.getElementById('edit-id').value = p.id;
+            document.getElementById('edit-name').value = p.name;
+            document.getElementById('edit-price').value = p.price;
+            document.getElementById('edit-discount').value = p.discount || 0;
+            document.getElementById('edit-category').value = p.category || 'ملابس';
+            document.getElementById('edit-desc').value = p.desc || '';
+            document.getElementById('edit-image1-file').value = '';
+            document.getElementById('edit-image2-file').value = '';
+
+            document.getElementById('edit-product-modal').classList.remove('hidden');
+            pushModalState('edit-product-modal');
+        }
+
+        function closeEditModal() { closeAllModals(); }
+
+        function saveEditedProduct() {
+            const id = document.getElementById('edit-id').value;
+            const name = document.getElementById('edit-name').value;
+            const price = document.getElementById('edit-price').value;
+            const discount = document.getElementById('edit-discount').value || 0;
+            const category = document.getElementById('edit-category').value;
+            const desc = document.getElementById('edit-desc').value;
+            
+            const img1File = document.getElementById('edit-image1-file').files[0];
+            const img2File = document.getElementById('edit-image2-file').files[0];
+
+            if (!name || !price) {
+                alert('الرجاء إدخال اسم المنتج والسعر على الأقل!');
+                return;
+            }
+
+            const existingProduct = products.find(p => String(p.id) === String(id));
+            if (!existingProduct) return;
+
+            let updatedData = {
+                name: name,
+                price: Number(price),
+                discount: Number(discount),
+                category: category,
+                desc: desc,
+                image1: existingProduct.image1,
+                image2: existingProduct.image2
+            };
+
+            const finishUpdate = () => {
+                db.collection("products").doc(String(id)).update(updatedData)
+                .then(() => {
+                    alert('تم تعديل المنتج بنجاح! ✅');
+                    closeEditModal();
+                })
+                .catch(() => alert('حدث خطأ أثناء الحفظ!'));
+            };
+
+            if (img1File) {
+                const reader1 = new FileReader();
+                reader1.onload = function(e1) {
+                    updatedData.image1 = e1.target.result;
+                    if (img2File) {
+                        const reader2 = new FileReader();
+                        reader2.onload = function(e2) {
+                            updatedData.image2 = e2.target.result;
+                            finishUpdate();
+                        };
+                        reader2.readAsDataURL(img2File);
+                    } else {
+                        finishUpdate();
+                    }
+                };
+                reader1.readAsDataURL(img1File);
+            } else if (img2File) {
+                const reader2 = new FileReader();
+                reader2.onload = function(e2) {
+                    updatedData.image2 = e2.target.result;
+                    finishUpdate();
+                };
+                reader2.readAsDataURL(img2File);
+            } else {
+                finishUpdate();
+            }
         }
 
         async function deleteProductFromCloud(id) {
