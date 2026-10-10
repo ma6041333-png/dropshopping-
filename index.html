@@ -64,7 +64,7 @@
 
     <div id="loading-overlay">
         <div class="spinner mb-3"></div>
-        <p id="loading-text" class="text-sm font-bold text-amber-400">جاري المزامنة السحابية...</p>
+        <p id="loading-text" class="text-sm font-bold text-amber-400">جاري التحميل...</p>
     </div>
 
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
@@ -109,12 +109,12 @@
     <div id="admin-panel" class="hidden bg-[#131921] text-white p-6 shadow-xl border-b border-gray-800">
         <div class="max-w-4xl mx-auto">
             <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
-                <h2 class="text-base font-bold text-[#febd69]">لوحة تحكم الآدمن (مزامنة سحابية حية)</h2>
+                <h2 class="text-base font-bold text-[#febd69]">لوحة تحكم الآدمن</h2>
                 <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1 rounded text-xs font-bold">إغلاق 🔒</button>
             </div>
             
             <div class="mb-6 bg-[#232f3e] p-4 rounded-lg border border-gray-700">
-                <h3 class="text-sm font-bold text-amber-300 mb-3">➕ إضافة منتج جديد (يظهر للموبايل والكمبيوتر فوراً):</h3>
+                <h3 class="text-sm font-bold text-amber-300 mb-3">➕ إضافة منتج جديد:</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                     <input type="text" id="new-name" placeholder="اسم المنتج" class="p-2 rounded bg-gray-900 border border-gray-700 text-xs text-white">
                     <input type="number" id="new-price" placeholder="السعر (ج.م)" class="p-2 rounded bg-gray-900 border border-gray-700 text-xs text-white">
@@ -134,7 +134,7 @@
                     </div>
                 </div>
                 <textarea id="new-desc" placeholder="وصف المنتج..." class="w-full p-2 rounded bg-gray-900 border border-gray-700 text-xs mb-3 text-white h-16"></textarea>
-                <button onclick="addProduct()" class="w-full bg-[#febd69] text-gray-950 py-2.5 rounded font-black hover:bg-[#f3a847] transition text-xs shadow">حفظ ونشر سحابياً 🚀</button>
+                <button onclick="addProduct()" class="w-full bg-[#febd69] text-gray-950 py-2.5 rounded font-black hover:bg-[#f3a847] transition text-xs shadow">حفظ ونشر 🚀</button>
             </div>
 
             <h3 class="text-sm font-bold text-amber-300 mb-2">📋 إدارة المنتجات:</h3>
@@ -203,7 +203,7 @@
         </div>
     </div>
 
-    <!-- سلة المشتريات بدون الشحن -->
+    <!-- سلة المشتريات -->
     <div id="cart-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex justify-end">
         <div class="bg-white text-gray-900 w-full max-w-md h-full p-5 flex flex-col justify-between shadow-2xl overflow-y-auto">
             <div>
@@ -278,15 +278,13 @@
             }
         });
 
-        function triggerLoading(action, customText) {
+        function triggerLoading(action) {
             const overlay = document.getElementById('loading-overlay');
-            const textEl = document.getElementById('loading-text');
-            if (textEl) textEl.innerText = customText || "جاري المزامنة السحابية...";
             if (overlay) overlay.classList.add('active');
             setTimeout(() => {
                 if (typeof action === 'function') action();
                 if (overlay) overlay.classList.remove('active');
-            }, 400);
+            }, 300);
         }
 
         function toggleMenu() {
@@ -413,7 +411,7 @@
                 return;
             }
 
-            triggerLoading(null, "جاري رفع ونشر المنتج سحابياً للجميع...");
+            triggerLoading(null);
 
             const reader1 = new FileReader();
             reader1.onload = function(e1) {
@@ -445,9 +443,9 @@
                 document.getElementById('new-desc').value = '';
                 document.getElementById('image1-file').value = '';
                 document.getElementById('image2-file').value = '';
-                alert('تم نشر المنتج سحابياً بنجاح! سيظهر الآن على الموبايل والكمبيوتر وفي كل مكان 🌐');
+                alert('تم نشر المنتج بنجاح!');
             } catch(error) {
-                alert('حدث خطأ أثناء الحفظ بالسحابة، تأكد من تفعيل قاعدة البيانات في فايبربيز!');
+                alert('حدث خطأ أثناء الحفظ!');
                 const overlay = document.getElementById('loading-overlay');
                 if (overlay) overlay.classList.remove('active');
             }
@@ -474,10 +472,10 @@
         }
 
         async function deleteProductFromCloud(id) {
-            if(confirm("هل أنت متأكد من حذف هذا المنتج نهائياً من كل الأجهزة؟")) {
+            if(confirm("هل أنت متأكد من حذف هذا المنتج نهائياً؟")) {
                 try {
                     await db.collection("products").doc(String(id)).delete();
-                    alert('تم الحذف بنجاح من السحابة!');
+                    alert('تم الحذف بنجاح!');
                 } catch(e) {
                     alert('حدث خطأ أثناء الحذف!');
                 }
