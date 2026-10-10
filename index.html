@@ -897,4 +897,51 @@
             const cName = document.getElementById('client-name').value.trim();
             const cPhone = document.getElementById('client-phone').value.trim();
             const cAddress = document.getElementById('client-address').value.trim();
-          
+            const cLocation = document.getElementById('client-location').value.trim();
+
+            if(!cName || !cPhone || !cAddress) { 
+                alert('الرجاء إدخال الاسم ورقم الهاتف والعنوان التفصيلي أولاً!'); 
+                return null; 
+            }
+
+            let message = `🛒 *طلب جديد من متجر DROP SHOPPING*\n\n`;
+            message += `👤 *الاسم:* ${cName}\n📞 *الهاتف:* ${cPhone}\n📍 *العنوان:* ${cAddress}\n`;
+            if (cLocation) {
+                message += `🗺️ *رابط اللوكيشن:* ${cLocation}\n`;
+            }
+            message += `\n📦 *المنتجات المطلوبة:*\n`;
+
+            let grandTotal = 0;
+            cart.forEach((item, index) => {
+                let itemTotal = item.product.price * item.quantity;
+                message += `${index + 1}. ${item.product.name} (×${item.quantity}) - ${itemTotal} ج.م\n`;
+                grandTotal += itemTotal;
+            });
+
+            message += `\n💰 *الإجمالي الكلي:* ${grandTotal} ج.م`;
+            return message;
+        }
+
+        function checkoutWhatsApp() {
+            const message = generateOrderText();
+            if (message) {
+                window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`, '_blank');
+            }
+        }
+
+        function checkoutTelegram() {
+            const message = generateOrderText();
+            if (message) {
+                window.open(`https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(message)}`, '_blank');
+            }
+        }
+
+        function checkoutMessenger() {
+            const message = generateOrderText();
+            if (message) {
+                window.open(`https://m.me/${MESSENGER_USERNAME}?text=${encodeURIComponent(message)}`, '_blank');
+            }
+        }
+    </script>
+</body>
+</html>
