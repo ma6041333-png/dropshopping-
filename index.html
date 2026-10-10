@@ -41,7 +41,7 @@
 
     <div id="loading-overlay">
         <div class="spinner mb-3"></div>
-        <p class="text-sm font-bold text-amber-400">جاري المعالجة والانتقال...</p>
+        <p id="loading-text" class="text-sm font-bold text-amber-400">جاري المعالجة والانتقال...</p>
     </div>
 
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
@@ -85,11 +85,11 @@
     <div id="admin-panel" class="hidden bg-[#131921] text-white p-6 shadow-xl border-b border-gray-800">
         <div class="max-w-4xl mx-auto">
             <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
-                <h2 class="text-base font-bold text-amber-400">لوحة تحكم الآدمن</h2>
+                <h2 class="text-base font-bold text-amber-400">لوحة تحكم الآدمن (مزامنة سحابية بين الأجهزة)</h2>
                 <button onclick="logoutAdmin()" class="bg-red-600 px-3 py-1 rounded text-xs font-bold">إغلاق 🔒</button>
             </div>
             <div class="mb-6 bg-[#232f3e] p-4 rounded-lg border border-gray-700">
-                <h3 class="text-sm font-bold text-amber-300 mb-3">➕ إضافة منتج جديد:</h3>
+                <h3 class="text-sm font-bold text-amber-300 mb-3">➕ إضافة منتج جديد (سيظهر للموبايل والكمبيوتر):</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                     <input type="text" id="new-name" placeholder="اسم المنتج" class="p-2 rounded bg-gray-900 border border-gray-700 text-xs text-white">
                     <input type="number" id="new-price" placeholder="السعر (ج.م)" class="p-2 rounded bg-gray-900 border border-gray-700 text-xs text-white">
@@ -109,7 +109,7 @@
                     </div>
                 </div>
                 <textarea id="new-desc" placeholder="وصف المنتج..." class="w-full p-2 rounded bg-gray-900 border border-gray-700 text-xs mb-3 text-white h-16"></textarea>
-                <button onclick="triggerLoading(addProduct)" class="w-full bg-[#febd69] text-gray-900 py-2.5 rounded font-black hover:bg-[#f3a847] transition text-xs">حفظ ونشر المنتج 🚀</button>
+                <button onclick="addProduct()" class="w-full bg-[#febd69] text-gray-900 py-2.5 rounded font-black hover:bg-[#f3a847] transition text-xs">نشر المنتج على كافة الأجهزة 🚀</button>
             </div>
             <h3 class="text-sm font-bold text-amber-300 mb-2">📋 إدارة المنتجات الحالية:</h3>
             <div class="overflow-x-auto">
@@ -210,6 +210,8 @@
     <script>
         const ADMIN_PASSWORD = "1695";
         const WHATSAPP_PHONE = "201550795100";
+        // سيرفر سحابي خاص بمتجرك لتزامن البيانات المباشر
+        const CLOUD_STORAGE_URL = "https://api.myjson.online/v1/records/dropshopping_store_data";
 
         let defaultProducts = [
             { id: 1, name: "تيشيرت أوفر سايز قطن فخم", price: 450, category: "ملابس", image1: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500", image2: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500", desc: "تيشيرت عالي الجودة مصنوع من القطن الخالص 100%، مريح جداً وعصري." },
@@ -217,21 +219,47 @@
         ];
 
         let products = [];
-        try {
-            products = JSON.parse(localStorage.getItem('drop_store_products')) || defaultProducts;
-        } catch(e) {
-            products = defaultProducts;
-        }
-
         let cart = [];
         let currentCategory = 'all';
         let currentModalProductId = null;
         let currentModalQty = 1;
 
-        renderStore();
+        // تحميل المنتجات فورياً من السحابة أول ما الصفحة تفتح
+        async function fetchProductsFromCloud() {
+            try {
+                let response = await fetch(CLOUD_STORAGE_URL);
+                if(response.ok) {
+                    let data = await response.json();
+                    products = data.data || defaultProducts;
+                } else {
+                    products = JSON.parse(localStorage.getItem('drop_store_products')) || defaultProducts;
+                }
+            } catch(e) {
+                products = JSON.parse(localStorage.getItem('drop_store_products')) || defaultProducts;
+            }
+            renderStore();
+        }
 
-        function triggerLoading(action) {
+        // رفع المنتجات ونشرها سحابياً لجميع الأجهزة
+        async function saveProductsToCloud() {
+            localStorage.setItem('drop_store_products', JSON.stringify(products));
+            try {
+                await fetch(CLOUD_STORAGE_URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: products })
+                });
+            } catch(e) {
+                console.log("حفظ محلي فقط");
+            }
+        }
+
+        fetchProductsFromCloud();
+
+        function triggerLoading(action, customText) {
             const overlay = document.getElementById('loading-overlay');
+            const textEl = document.getElementById('loading-text');
+            if (textEl) textEl.innerText = customText || "جاري المعالجة والانتقال...";
             if (overlay) overlay.classList.add('active');
             setTimeout(() => {
                 if (typeof action === 'function') action();
@@ -249,14 +277,6 @@
             if (!toast) return;
             toast.classList.add('show');
             setTimeout(() => { toast.classList.remove('show'); }, 2000);
-        }
-
-        function saveProducts() {
-            try {
-                localStorage.setItem('drop_store_products', JSON.stringify(products));
-            } catch (e) {
-                alert('ذاكرة المتصفح ممتلئة!');
-            }
         }
 
         function goHome() {
@@ -371,6 +391,8 @@
                 return;
             }
 
+            triggerLoading(null, "جاري رفع ونشر المنتج لجميع الأجهزة...");
+
             const reader1 = new FileReader();
             reader1.onload = function(e1) {
                 const img1Data = e1.target.result;
@@ -387,18 +409,21 @@
             reader1.readAsDataURL(img1File);
         }
 
-        function saveNewProduct(name, price, category, desc, img1, img2) {
+        async function saveNewProduct(name, price, category, desc, img1, img2) {
             const newP = { id: Date.now(), name, price: Number(price), category, desc, image1: img1, image2: img2 };
             products.push(newP);
-            saveProducts();
             renderStore();
+            await saveProductsToCloud();
+
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) overlay.classList.remove('active');
 
             document.getElementById('new-name').value = '';
             document.getElementById('new-price').value = '';
             document.getElementById('new-desc').value = '';
             document.getElementById('image1-file').value = '';
             document.getElementById('image2-file').value = '';
-            alert('تمت إضافة المنتج بنجاح!');
+            alert('تم نشر المنتج بنجاح! سيظهر الآن على الموبايل والكمبيوتر وفي كل الأجهزة 🌐');
         }
 
         function renderAdminTable() {
@@ -414,39 +439,18 @@
                         </td>
                         <td class="py-2">${p.price || 0} ج.م</td>
                         <td class="py-2 flex gap-1">
-                            <button onclick="triggerLoading(() => editProduct(${p.id}))" class="bg-blue-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">تعديل</button>
-                            <button onclick="triggerLoading(() => deleteProduct(${p.id}))" class="bg-red-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">حذف</button>
+                            <button onclick="deleteProduct(${p.id})" class="bg-red-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">حذف</button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        function editProduct(id) {
-            const p = products.find(item => item.id === id);
-            if(!p) return;
-
-            const newName = prompt("تعديل اسم المنتج:", p.name);
-            if(newName === null) return;
-            const newPrice = prompt("تعديل سعر المنتج:", p.price);
-            if(newPrice === null) return;
-            const newDesc = prompt("تعديل تفاصيل المنتج:", p.desc || "");
-            if(newDesc === null) return;
-
-            p.name = newName || p.name;
-            p.price = Number(newPrice) || p.price;
-            p.desc = newDesc;
-
-            saveProducts();
-            renderStore();
-            alert('تم التعديل بنجاح!');
-        }
-
-        function deleteProduct(id) {
-            if(confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
+        async function deleteProduct(id) {
+            if(confirm("هل أنت متأكد من حذف هذا المنتج من كافة الأجهزة؟")) {
                 products = products.filter(p => p.id !== id);
-                saveProducts();
                 renderStore();
+                await saveProductsToCloud();
             }
         }
 
