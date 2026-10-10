@@ -41,6 +41,30 @@
             background-color: #febd69; border-radius: 4px; box-shadow: 0 0 8px rgba(254, 189, 105, 0.8);
         }
 
+        /* تنسيق زر السلة العايم والثابت */
+        #floating-cart-btn {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            z-index: 99;
+            background: linear-gradient(135deg, #f3a847 0%, #febd69 100%);
+            color: #131921;
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 900;
+            box-shadow: 0 10px 25px rgba(254, 189, 105, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #ffffff;
+        }
+        #floating-cart-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 15px 30px rgba(254, 189, 105, 0.6);
+        }
+
         #loading-overlay {
             position: fixed; inset: 0; background: rgba(19, 25, 33, 0.85); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;
@@ -51,7 +75,7 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         #toast-notification {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px);
             background: #131921; color: #febd69; border: 1px solid rgba(254, 189, 105, 0.4);
             padding: 10px 20px; border-radius: 30px; font-weight: bold; font-size: 13px; z-index: 10000;
             box-shadow: 0 10px 25px rgba(0,0,0,0.4); transition: transform 0.3s ease, opacity 0.3s ease; opacity: 0;
@@ -70,29 +94,32 @@
 
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
 
-    <!-- الهيدر الرئيسي -->
-    <header class="header-bg sticky top-0 z-50 shadow-md">
+    <!-- زر سلة المشتريات العايم المتحرك في المتجر -->
+    <div id="floating-cart-btn" onclick="triggerLoading(openCart)">
+        <span class="text-xl">🛒</span>
+        <span class="text-xs bg-gray-950 text-amber-400 px-2 py-0.5 rounded-full font-black" id="cart-count">0</span>
+    </div>
+
+    <!-- الهيدر الرئيسي الفاخر -->
+    <header class="header-bg sticky top-0 z-50 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            
             <div class="flex items-center gap-3">
-                <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1 transition">☰</button>
-                
-                <div class="flex items-center gap-2.5 cursor-pointer select-none" onclick="handleSecretAdminClick()">
-                    <div id="owner-avatar-container" class="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400 bg-gray-800 flex items-center justify-center shrink-0 shadow-lg">
-                        <img id="owner-avatar-img" src="" class="w-full h-full object-cover hidden">
-                        <span id="owner-avatar-placeholder" class="text-base font-bold text-amber-400 hidden">👑</span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-lg sm:text-xl uppercase gold-brand-text leading-tight">DROP</span>
-                        <span class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">SHOPPING</span>
-                    </div>
+                <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1 transition hover:opacity-80">☰</button>
+            </div>
+
+            <div class="flex items-center gap-3 cursor-pointer select-none" onclick="handleSecretAdminClick()">
+                <div class="flex flex-col text-left sm:text-right">
+                    <span class="text-lg sm:text-xl uppercase gold-brand-text leading-tight">DROP</span>
+                    <span class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">SHOPPING</span>
+                </div>
+
+                <div id="owner-avatar-container" class="w-13 h-13 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 border-amber-400 bg-gray-900 flex items-center justify-center shrink-0 shadow-xl">
+                    <img id="owner-avatar-img" src="" class="w-full h-full object-cover hidden">
+                    <span id="owner-avatar-placeholder" class="text-xl font-bold text-amber-400 hidden">👑</span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
-                <button onclick="triggerLoading(openCart)" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-4 py-2 rounded-md text-[#febd69] font-bold transition shadow">
-                    🛒 <span id="cart-count" class="bg-[#febd69] text-gray-950 text-xs px-1.5 py-0.2 rounded-full font-black">0</span>
-                </button>
-            </div>
         </div>
     </header>
 
@@ -326,14 +353,10 @@
                 </div>
 
                 <div class="space-y-2 pt-1">
-                    <p class="font-bold text-center text-gray-400 text-[11px] mb-2">اختر وسيلة إرسال الطلب:</p>
+                    <p class="font-bold text-center text-gray-400 text-[11px] mb-2">إرسال الطلب:</p>
                     <button onclick="checkoutWhatsApp()" class="w-full bg-[#28a745] hover:bg-[#218838] text-white py-3 rounded-xl font-black text-xs shadow-lg transition flex items-center justify-center gap-2">
                         <span>إرسال الطلب عبر واتساب</span>
                         <span>📱</span>
-                    </button>
-                    <button onclick="checkoutTelegram()" class="w-full bg-[#0088cc] hover:bg-[#0077b5] text-white py-3 rounded-xl font-black text-xs shadow-lg transition flex items-center justify-center gap-2">
-                        <span>إرسال الطلب عبر تليجرام (01550795100)</span>
-                        <span>✈️</span>
                     </button>
                 </div>
             </div>
@@ -348,7 +371,6 @@
     <script>
         const ADMIN_PASSWORD = "1695";
         const WHATSAPP_PHONE = "201550795100";
-        const TELEGRAM_PHONE = "201550795100"; 
         const SHIPPING_FEE = 50; 
 
         const firebaseConfig = {
@@ -909,76 +931,4 @@
             
             const summaryContainer = document.getElementById('checkout-summary-items');
             summaryContainer.innerHTML = '';
-            let productsTotal = 0;
-
-            cart.forEach((item) => {
-                let unitPrice = calculateFinalPrice(item.product.price, item.product.discount);
-                let itemTotal = unitPrice * item.quantity;
-                productsTotal += itemTotal;
-                summaryContainer.innerHTML += `
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="font-bold truncate w-48">• ${item.product.name} (×${item.quantity})</span>
-                        <span class="font-black text-[#b12704]">${itemTotal} ج.م</span>
-                    </div>
-                `;
-            });
-
-            let finalGrandTotal = productsTotal + SHIPPING_FEE;
-
-            document.getElementById('checkout-grand-total').innerText = finalGrandTotal + ' ج.م';
-
-            document.getElementById('cart-modal').classList.add('hidden');
-            document.getElementById('checkout-modal').classList.remove('hidden');
-            pushModalState('checkout-modal');
-        }
-
-        function closeCheckoutPage() { closeAllModals(); }
-
-        function generateOrderText() {
-            const cName = document.getElementById('client-name').value.trim();
-            const cPhone = document.getElementById('client-phone').value.trim();
-            const cAddress = document.getElementById('client-address').value.trim();
-            const cLocation = document.getElementById('client-location').value.trim();
-
-            if(!cName || !cPhone || !cAddress) { 
-                alert('الرجاء إدخال الاسم ورقم الهاتف والعنوان التفصيلي أولاً!'); 
-                return null; 
-            }
-
-            let message = `🛒 *طلب جديد من متجر DROP SHOPPING*\n\n`;
-            message += `👤 *الاسم:* ${cName}\n📞 *الهاتف:* ${cPhone}\n📍 *العنوان:* ${cAddress}\n`;
-            if (cLocation) {
-                message += `🗺️ *رابط اللوكيشن:* ${cLocation}\n`;
-            }
-            message += `\n📦 *المنتجات المطلوبة:*\n`;
-
-            let productsTotal = 0;
-            cart.forEach((item, index) => {
-                let unitPrice = calculateFinalPrice(item.product.price, item.product.discount);
-                let itemTotal = unitPrice * item.quantity;
-                message += `${index + 1}. ${item.product.name} (×${item.quantity}) - ${itemTotal} ج.م\n`;
-                productsTotal += itemTotal;
-            });
-
-            let finalGrandTotal = productsTotal + SHIPPING_FEE;
-            message += `\n───────────────\n`;
-            message += `💰 *الإجمالي النهائي المطلوب (شامل مصاريف الشحن):* ${finalGrandTotal} ج.م`;
-            return message;
-        }
-
-        function checkoutWhatsApp() {
-            const message = generateOrderText();
-            if (message) {
-                window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`, '_blank');
-            }
-        }
-
-        function checkoutTelegram() {
-            const message = generateOrderText();
-            if (message) {
-                window.open(`https://t.me/${TELEGRAM_PHONE}?text=${encodeURIComponent(message)}`, '_blank');
-            }
-        }
-    </script>
-</body>
-</html>
+          
