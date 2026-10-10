@@ -14,13 +14,13 @@
     <style>
         * { font-family: 'Tajawal', sans-serif; }
         
-        /* الوضع الفاتح (Light Mode) */
+        /* الوضع الفاتح */
         body.light-theme { background-color: #f3f4f6; color: #111827; }
         body.light-theme .custom-card { background: #ffffff; border-color: #e5e7eb; color: #111827; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         body.light-theme .header-bg { background: #131921; color: #ffffff; }
         body.light-theme .inner-box { background: #f9fafb; border-color: #e5e7eb; color: #1f2937; }
 
-        /* الوضع الداكن (Dark Mode) */
+        /* الوضع الداكن */
         body.dark-theme { background-color: #0b0f15; color: #f3f4f6; }
         body.dark-theme .custom-card { background: #131921; border-color: #1f2937; color: #f3f4f6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
         body.dark-theme .header-bg { background: #0d1217; color: #ffffff; border-bottom: 1px solid rgba(254, 189, 105, 0.2); }
@@ -37,6 +37,7 @@
             letter-spacing: 1px;
         }
 
+        /* شريط أصفر متحرك تحت الخيار النشط */
         .tab-btn {
             position: relative;
             padding-bottom: 6px;
@@ -46,22 +47,13 @@
             content: '';
             position: absolute;
             bottom: 0;
-            left: 10%;
-            width: 80%;
+            left: 5%;
+            width: 90%;
             height: 3.5px;
             background-color: #febd69;
             border-radius: 4px;
             box-shadow: 0 0 8px rgba(254, 189, 105, 0.8);
         }
-
-        #loading-overlay {
-            position: fixed; inset: 0; background: rgba(19, 25, 33, 0.85); z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;
-            transition: opacity 0.3s ease; opacity: 0; pointer-events: none;
-        }
-        #loading-overlay.active { opacity: 1; pointer-events: auto; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #febd69; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         #toast-notification {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
@@ -76,41 +68,36 @@
 </head>
 <body class="light-theme flex flex-col min-h-screen">
 
-    <div id="loading-overlay">
-        <div class="spinner mb-3"></div>
-        <p id="loading-text" class="text-sm font-bold text-amber-400">جاري التحميل...</p>
-    </div>
-
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
 
-    <!-- الهيدر المطور (قائمة + بروفايل كبير + شعار + سلة) -->
+    <!-- الهيدر الرئيسي -->
     <header class="header-bg sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <!-- زر القائمة مع صورة البروفايل الكبيرة بجانبه -->
-                <button onclick="toggleMenu()" class="flex items-center gap-2.5 focus:outline-none p-1 group">
-                    <div class="relative w-11 h-11 rounded-full overflow-hidden border-2 border-amber-400 bg-gray-800 flex items-center justify-center shrink-0 shadow-md">
+                <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1 transition">☰</button>
+                
+                <!-- صورة بروفايل المالك الكبيرة والشعار -->
+                <div class="flex items-center gap-2.5 cursor-pointer select-none" onclick="handleSecretAdminClick()">
+                    <div id="owner-avatar-container" class="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400 bg-gray-800 flex items-center justify-center shrink-0 shadow-lg">
                         <img id="owner-avatar-img" src="" class="w-full h-full object-cover hidden">
-                        <span id="owner-avatar-placeholder" class="text-sm font-bold text-amber-400">👑</span>
+                        <span id="owner-avatar-placeholder" class="text-base font-bold text-amber-400">👑</span>
                     </div>
-                    <span class="text-[#febd69] text-2xl font-bold group-hover:text-white transition">☰</span>
-                </button>
-
-                <div class="cursor-pointer flex flex-col select-none" onclick="handleSecretAdminClick()">
-                    <span class="text-lg sm:text-xl uppercase gold-brand-text leading-tight">DROP</span>
-                    <span class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">SHOPPING</span>
+                    <div class="flex flex-col">
+                        <span class="text-lg sm:text-xl uppercase gold-brand-text leading-tight">DROP</span>
+                        <span class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">SHOPPING</span>
+                    </div>
                 </div>
             </div>
 
             <div class="flex items-center gap-2">
-                <button onclick="triggerLoading(openCart)" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-3.5 py-1.5 rounded-md text-[#febd69] font-bold transition">
+                <button onclick="openCart()" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-4 py-2 rounded-md text-[#febd69] font-bold transition shadow">
                     🛒 <span id="cart-count" class="bg-[#febd69] text-gray-950 text-xs px-1.5 py-0.2 rounded-full font-black">0</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- القائمة الجانبية (تحتوي على الثيم ومميزات المتجر) -->
+    <!-- القائمة الجانبية -->
     <div id="side-menu" class="fixed inset-y-0 right-0 bg-[#131921] text-white w-[280px] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between p-5 border-l border-gray-800">
         <div>
             <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
@@ -118,16 +105,16 @@
                 <button onclick="closeMenu()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
             </div>
             <nav class="space-y-3 font-bold text-sm">
-                <!-- زرار تبديل الوضع الداكن والفاتح مع التحميل -->
-                <button onclick="closeMenu(); triggerLoading(() => toggleTheme())" class="w-full text-right py-2.5 px-3 rounded-lg bg-[#232f3e] text-amber-400 hover:bg-[#374151] transition flex items-center justify-between">
+                <!-- زرار الوضع الداكن / الفاتح الفوري للعميل -->
+                <button onclick="toggleTheme()" class="w-full text-right py-2.5 px-3 rounded-lg bg-[#232f3e] text-amber-400 hover:bg-[#374151] transition flex items-center justify-between">
                     <span id="menu-theme-text">🌙 الوضع الداكن</span>
                     <span>⚡</span>
                 </button>
 
-                <button onclick="closeMenu(); triggerLoading(() => { goHome(); filterCategory('all'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">📋 الرئيسية وكل المنتجات</button>
-                <button onclick="closeMenu(); triggerLoading(() => { goHome(); filterCategory('ملابس'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">👕 قسم الملابس</button>
-                <button onclick="closeMenu(); triggerLoading(() => { goHome(); filterCategory('أحذية'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">👟 قسم الأحذية</button>
-                <button onclick="closeMenu(); triggerLoading(() => { goHome(); filterCategory('إكسسوارات'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">⌚ قسم الإكسسوارات</button>
+                <button onclick="closeMenu(); goHome(); filterCategory('all');" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">📋 الرئيسية وكل المنتجات</button>
+                <button onclick="closeMenu(); goHome(); filterCategory('ملابس');" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">👕 قسم الملابس</button>
+                <button onclick="closeMenu(); goHome(); filterCategory('أحذية');" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">👟 قسم الأحذية</button>
+                <button onclick="closeMenu(); goHome(); filterCategory('إكسسوارات');" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">⌚ قسم الإكسسوارات</button>
                 <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="block py-2.5 px-3 rounded-lg text-[#febd69] hover:bg-[#232f3e] transition">📘 تابعنا على فيسبوك</a>
             </nav>
         </div>
@@ -191,11 +178,11 @@
             </div>
         </div>
 
-        <!-- الأزرار السريعة الواجهة منظمة -->
+        <!-- الأزرار السريعة مع شريط أصفر متحرك تلقائياً -->
         <div class="flex justify-center gap-6 mb-6 border-b border-gray-200 dark:border-gray-800 pb-3">
-            <button id="tab-all" onclick="triggerLoading(() => { currentTab = 'all'; filterCategory('all'); })" class="tab-btn active-tab font-black text-xs sm:text-sm px-2 py-1">📋 كل المنتجات</button>
-            <button id="tab-best" onclick="triggerLoading(() => { currentTab = 'best'; filterSpecial('best'); })" class="tab-btn font-black text-xs sm:text-sm px-2 py-1">🔥 الأكثر مبيعاً</button>
-            <button id="tab-new" onclick="triggerLoading(() => { currentTab = 'new'; filterSpecial('new'); })" class="tab-btn font-black text-xs sm:text-sm px-2 py-1">✨ وصل حديثاً</button>
+            <button id="tab-all" onclick="filterCategory('all');" class="tab-btn active-tab font-black text-xs sm:text-sm px-2 py-1">📋 كل المنتجات</button>
+            <button id="tab-best" onclick="filterSpecial('best');" class="tab-btn font-black text-xs sm:text-sm px-2 py-1">🔥 الأكثر مبيعاً</button>
+            <button id="tab-new" onclick="filterSpecial('new');" class="tab-btn font-black text-xs sm:text-sm px-2 py-1">✨ وصل حديثاً</button>
         </div>
 
         <div class="flex justify-between items-center mb-4 border-b border-gray-300 dark:border-gray-800 pb-2">
@@ -260,7 +247,7 @@
         <img id="zoomed-image" src="" class="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl">
     </div>
 
-    <!-- سلة المشتريات -->
+    <!-- سلة المشتريات المنفصلة (نمط أمازون) -->
     <div id="cart-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex justify-end">
         <div class="custom-card w-full max-w-md h-full p-5 flex flex-col justify-between shadow-2xl overflow-y-auto">
             <div>
@@ -271,21 +258,26 @@
                 <div id="cart-items" class="space-y-3 mb-4"></div>
             </div>
             
-            <div class="border-t pt-3 space-y-2">
-                <div class="p-3 rounded-lg border space-y-2 inner-box">
-                    <h4 class="text-[11px] font-black mb-1">📋 بيانات استلام الطلب:</h4>
-                    <input type="text" id="client-name" placeholder="الاسم ثلاثي" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-                    <input type="tel" id="client-phone" placeholder="رقم الهاتف" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-                    <textarea id="client-address" placeholder="العنوان بالتفصيل (المحافظة، المدينة، الشارع)" class="w-full p-2 rounded border text-xs h-14 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"></textarea>
-                </div>
-
-                <div class="flex justify-between items-center p-3 rounded-lg border font-black text-base inner-box">
+            <div class="border-t pt-3 space-y-3">
+                <div class="flex justify-between items-center p-3 rounded-xl border font-black text-base inner-box">
                     <span>الإجمالي الكلي:</span>
                     <span id="cart-total" class="text-[#b12704]">0 ج.م</span>
                 </div>
 
-                <button onclick="triggerLoading(checkoutWhatsApp)" class="w-full bg-[#28a745] hover:bg-[#218838] text-white py-3 rounded-lg font-black text-xs shadow transition text-center">تأكيد وإرسال الطلب عبر الواتساب 📱</button>
-                <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="w-full bg-[#1877f2] text-white py-2.5 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1.5 transition"><span>📘 تابعنا على فيسبوك</span></a>
+                <!-- زر الذهاب للطلب والشراء -->
+                <button onclick="openCheckoutSection()" id="go-checkout-btn" class="w-full bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-3 rounded-xl font-black text-sm shadow transition text-center">الذهاب لإتمام الطلب والشراء 📦</button>
+
+                <!-- نموذج بيانات الاستلام (مخفي لحين الضغط على الذهاب للشراء) -->
+                <div id="checkout-form-section" class="hidden p-3 rounded-xl border space-y-2 inner-box">
+                    <h4 class="text-xs font-black mb-1 text-amber-500">📋 بيانات استلام الطلب:</h4>
+                    <input type="text" id="client-name" placeholder="الاسم ثلاثي" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                    <input type="tel" id="client-phone" placeholder="رقم الهاتف" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                    <textarea id="client-address" placeholder="العنوان بالتفصيل (المحافظة، المدينة، الشارع)" class="w-full p-2 rounded border text-xs h-14 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"></textarea>
+                    
+                    <button onclick="checkoutWhatsApp()" class="w-full bg-[#28a745] hover:bg-[#218838] text-white py-3 rounded-lg font-black text-xs shadow transition text-center mt-2">تأكيد وإرسال الطلب عبر الواتساب 📱</button>
+                </div>
+
+                <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="w-full bg-[#1877f2] text-white py-2 rounded-lg font-bold text-xs shadow flex items-center justify-center gap-1.5 transition"><span>📘 تابعنا على فيسبوك</span></a>
             </div>
         </div>
     </div>
@@ -320,7 +312,6 @@
         let products = [];
         let cart = [];
         let currentCategory = 'all';
-        let currentTab = 'all';
         let currentModalProductId = null;
         let currentModalQty = 1;
         let logoClickCount = 0;
@@ -394,7 +385,6 @@
         function uploadOwnerAvatar() {
             const file = document.getElementById('owner-avatar-file').files[0];
             if (!file) return alert('الرجاء اختيار صورة أولاً!');
-            triggerLoading();
             const reader = new FileReader();
             reader.onload = function(e) {
                 db.collection("settings").doc("owner_profile").set({ avatarUrl: e.target.result })
@@ -422,15 +412,6 @@
                 renderStore();
             }
         });
-
-        function triggerLoading(action) {
-            const overlay = document.getElementById('loading-overlay');
-            if (overlay) overlay.classList.add('active');
-            setTimeout(() => {
-                if (typeof action === 'function') action();
-                if (overlay) overlay.classList.remove('active');
-            }, 300);
-        }
 
         function toggleMenu() {
             const sideMenu = document.getElementById('side-menu');
@@ -480,7 +461,6 @@
 
         function goHome() {
             currentCategory = 'all';
-            currentTab = 'all';
             document.getElementById('section-title').innerText = 'جميع المنتجات المعروضة';
             document.getElementById('search-input').value = '';
             updateTabUI('tab-all');
@@ -517,7 +497,7 @@
             filtered.forEach(p => {
                 grid.innerHTML += `
                     <div class="product-card custom-card overflow-hidden flex flex-col justify-between p-2.5 border">
-                        <div class="cursor-pointer" onclick="triggerLoading(() => openProductModal('${p.id}'))">
+                        <div class="cursor-pointer" onclick="openProductModal('${p.id}')">
                             <div class="h-36 sm:h-44 rounded-md mb-2 flex items-center justify-center p-1 inner-box border">
                                 <img src="${p.image1 || ''}" alt="${p.name || ''}" class="w-full h-full object-contain">
                             </div>
@@ -527,8 +507,8 @@
                         <div>
                             <p class="text-[#b12704] font-black text-sm mb-2">${p.price || 0} <span class="text-[10px]">ج.م</span></p>
                             <div class="grid grid-cols-2 gap-1">
-                                <button onclick="triggerLoading(() => addToCartDirect('${p.id}'))" class="bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">🛒 أضف</button>
-                                <button onclick="triggerLoading(() => buyNowDirect('${p.id}'))" class="bg-[#ffd814] hover:bg-[#f7ca00] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">⚡ شراء</button>
+                                <button onclick="addToCartDirect('${p.id}')" class="bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">🛒 أضف</button>
+                                <button onclick="buyNowDirect('${p.id}')" class="bg-[#ffd814] hover:bg-[#f7ca00] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">⚡ شراء</button>
                             </div>
                         </div>
                     </div>
@@ -560,7 +540,7 @@
             filtered.forEach(p => {
                 grid.innerHTML += `
                     <div class="product-card custom-card overflow-hidden flex flex-col justify-between p-2.5 border">
-                        <div class="cursor-pointer" onclick="triggerLoading(() => openProductModal('${p.id}'))">
+                        <div class="cursor-pointer" onclick="openProductModal('${p.id}')">
                             <div class="h-36 sm:h-44 rounded-md mb-2 flex items-center justify-center p-1 inner-box border">
                                 <img src="${p.image1 || ''}" alt="${p.name || ''}" class="w-full h-full object-contain">
                             </div>
@@ -570,8 +550,8 @@
                         <div>
                             <p class="text-[#b12704] font-black text-sm mb-2">${p.price || 0} <span class="text-[10px]">ج.م</span></p>
                             <div class="grid grid-cols-2 gap-1">
-                                <button onclick="triggerLoading(() => addToCartDirect('${p.id}'))" class="bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">🛒 أضف</button>
-                                <button onclick="triggerLoading(() => buyNowDirect('${p.id}'))" class="bg-[#ffd814] hover:bg-[#f7ca00] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">⚡ شراء</button>
+                                <button onclick="addToCartDirect('${p.id}')" class="bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">🛒 أضف</button>
+                                <button onclick="buyNowDirect('${p.id}')" class="bg-[#ffd814] hover:bg-[#f7ca00] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">⚡ شراء</button>
                             </div>
                         </div>
                     </div>
@@ -603,8 +583,8 @@
 
             switchModalImage(p.image1, 1);
 
-            document.getElementById('modal-cart-btn').setAttribute('onclick', `triggerLoading(() => { addModalToCart(); closeProductModal(); });`);
-            document.getElementById('modal-buy-btn').setAttribute('onclick', `triggerLoading(() => { modalBuyNow(); closeProductModal(); });`);
+            document.getElementById('modal-cart-btn').setAttribute('onclick', `addModalToCart(); closeProductModal();`);
+            document.getElementById('modal-buy-btn').setAttribute('onclick', `modalBuyNow();`);
 
             document.getElementById('product-modal').classList.remove('hidden');
             pushModalState('product-modal');
@@ -651,8 +631,6 @@
                 return;
             }
 
-            triggerLoading();
-
             const reader1 = new FileReader();
             reader1.onload = function(e1) {
                 const img1Data = e1.target.result;
@@ -675,9 +653,6 @@
             
             try {
                 await db.collection("products").doc(productId).set(newP);
-                const overlay = document.getElementById('loading-overlay');
-                if (overlay) overlay.classList.remove('active');
-
                 document.getElementById('new-name').value = '';
                 document.getElementById('new-price').value = '';
                 document.getElementById('new-desc').value = '';
@@ -686,8 +661,6 @@
                 alert('تم نشر المنتج بنجاح!');
             } catch(error) {
                 alert('حدث خطأ أثناء الحفظ!');
-                const overlay = document.getElementById('loading-overlay');
-                if (overlay) overlay.classList.remove('active');
             }
         }
 
@@ -729,14 +702,9 @@
         }
 
         function buyNowDirect(id) {
-            const product = products.find(p => String(p.id) === String(id));
-            if (product) {
-                const existing = cart.find(item => String(item.product.id) === String(id));
-                if (existing) { existing.quantity += 1; } 
-                else { cart.push({ product: product, quantity: 1 }); }
-                updateCartUI();
-                openCart();
-            }
+            addToCartDirect(id);
+            openCart();
+            openCheckoutSection();
         }
 
         function addModalToCart() {
@@ -751,14 +719,10 @@
         }
 
         function modalBuyNow() {
-            const product = products.find(p => String(p.id) === String(currentModalProductId));
-            if (product) {
-                const existing = cart.find(item => String(item.product.id) === String(currentModalProductId));
-                if (existing) { existing.quantity += currentModalQty; } 
-                else { cart.push({ product: product, quantity: currentModalQty }); }
-                updateCartUI();
-                openCart();
-            }
+            addModalToCart();
+            closeProductModal();
+            openCart();
+            openCheckoutSection();
         }
 
         function increaseQty(index) { cart[index].quantity += 1; updateCartUI(); }
@@ -787,19 +751,19 @@
                 let itemTotal = item.product.price * item.quantity;
                 grandTotal += itemTotal;
                 itemsContainer.innerHTML += `
-                    <div class="flex justify-between items-center border-b pb-2.5 text-xs gap-2">
-                        <div class="flex items-center gap-2">
-                            <img src="${item.product.image1 || ''}" class="w-10 h-10 rounded object-contain border inner-box">
+                    <div class="flex justify-between items-center border-b pb-3 text-xs gap-3">
+                        <div class="flex items-center gap-3">
+                            <img src="${item.product.image1 || ''}" class="w-16 h-16 rounded-lg object-contain border inner-box p-1">
                             <div>
-                                <p class="font-bold">${item.product.name || ''}</p>
-                                <p class="text-[#b12704] font-bold">${item.product.price} ج.م × ${item.quantity}</p>
+                                <p class="font-bold text-sm mb-1">${item.product.name || ''}</p>
+                                <p class="text-[#b12704] font-black text-sm">${item.product.price} ج.م × ${item.quantity}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-1.5">
-                            <button onclick="decreaseQty(${index})" class="custom-card border w-6 h-6 rounded font-black text-xs flex items-center justify-center">-</button>
-                            <span class="font-bold text-xs w-4 text-center">${item.quantity}</span>
-                            <button onclick="increaseQty(${index})" class="custom-card border w-6 h-6 rounded font-black text-xs flex items-center justify-center">+</button>
-                            <button onclick="removeFromCart(${index})" class="text-red-600 font-bold ml-1 text-[10px]">حذف</button>
+                            <button onclick="decreaseQty(${index})" class="custom-card border w-7 h-7 rounded font-black text-sm flex items-center justify-center">-</button>
+                            <span class="font-bold text-sm w-5 text-center">${item.quantity}</span>
+                            <button onclick="increaseQty(${index})" class="custom-card border w-7 h-7 rounded font-black text-sm flex items-center justify-center">+</button>
+                            <button onclick="removeFromCart(${index})" class="text-red-600 font-bold ml-2 text-xs">حذف</button>
                         </div>
                     </div>
                 `;
@@ -812,10 +776,18 @@
         
         function openCart() {
             document.getElementById('cart-modal').classList.remove('hidden');
+            document.getElementById('checkout-form-section').classList.add('hidden');
+            document.getElementById('go-checkout-btn').classList.remove('hidden');
             pushModalState('cart-modal');
         }
         
         function closeCart() { closeAllModals(); }
+
+        function openCheckoutSection() {
+            if(cart.length === 0) { alert('السلة فارغة!'); return; }
+            document.getElementById('checkout-form-section').classList.remove('hidden');
+            document.getElementById('go-checkout-btn').classList.add('hidden');
+        }
 
         function checkoutWhatsApp() {
             if(cart.length === 0) { alert('السلة فارغة!'); return; }
