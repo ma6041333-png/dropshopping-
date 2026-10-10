@@ -14,7 +14,7 @@
     <style>
         * { font-family: 'Tajawal', sans-serif; }
         
-        /* الوضع الفاتح (Light Mode) مع ألوان واضحة جداً */
+        /* الوضع الفاتح (Light Mode) */
         body.light-theme { background-color: #f3f4f6; color: #111827; }
         body.light-theme .custom-card { background: #ffffff; border-color: #e5e7eb; color: #111827; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         body.light-theme .header-bg { background: #131921; color: #ffffff; }
@@ -35,6 +35,24 @@
             -webkit-text-fill-color: transparent;
             font-weight: 900;
             letter-spacing: 1px;
+        }
+
+        /* تنسيق زرار الفلترة المكون من شريط أصفر تحت الخيار النشط */
+        .tab-btn {
+            position: relative;
+            padding-bottom: 6px;
+            transition: all 0.2s ease;
+        }
+        .tab-btn.active-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            width: 80%;
+            height: 3.5px;
+            background-color: #febd69;
+            border-radius: 4px;
+            box-shadow: 0 0 8px rgba(254, 189, 105, 0.8);
         }
 
         #loading-overlay {
@@ -66,20 +84,27 @@
 
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
 
-    <!-- الهيدر الرئيسي مع زر تحويل الثيم للعميل -->
+    <!-- الهيدر الرئيسي مع صورة بروفايل المالك وشعار المتجر -->
     <header class="header-bg sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1 transition">☰</button>
-                <!-- الضغط 3 مرات يفتح لوحة الأدمن السرية -->
-                <div class="cursor-pointer flex flex-col select-none" onclick="handleSecretAdminClick()">
-                    <span class="text-lg sm:text-xl uppercase gold-brand-text leading-tight">DROP</span>
-                    <span class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">SHOPPING</span>
+                
+                <!-- صورة بروفايل المالك وشعار المتجر -->
+                <div class="flex items-center gap-2 cursor-pointer select-none" onclick="handleSecretAdminClick()">
+                    <div id="owner-avatar-container" class="w-9 h-9 rounded-full overflow-hidden border-2 border-amber-400 bg-gray-800 flex items-center justify-center shrink-0">
+                        <img id="owner-avatar-img" src="" class="w-full h-full object-cover hidden">
+                        <span id="owner-avatar-placeholder" class="text-xs font-bold text-amber-400">👑</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-lg sm:text-xl uppercase gold-brand-text leading-tight">DROP</span>
+                        <span class="text-[10px] uppercase tracking-widest text-amber-300 font-bold">SHOPPING</span>
+                    </div>
                 </div>
             </div>
+
             <div class="flex items-center gap-2">
-                <!-- زر التحكم بالوضع الداكن / الفاتح للعميل -->
-                <button onclick="toggleTheme()" id="theme-toggle-btn" class="bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-3 py-1.5 rounded-lg text-amber-400 text-xs font-bold transition shadow-sm" title="تغيير المظهر">
+                <button onclick="toggleTheme()" id="theme-toggle-btn" class="bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-3 py-1.5 rounded-lg text-amber-400 text-xs font-bold transition shadow-sm">
                     🌙 الوضع الداكن
                 </button>
                 <button onclick="triggerLoading(openCart)" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-3.5 py-1.5 rounded-md text-[#febd69] font-bold transition">
@@ -94,13 +119,14 @@
         <div>
             <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
                 <span class="font-black text-sm text-[#febd69]">قائمة المتجر</span>
-                <button onclick="toggleMenu()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
+                <button onclick="closeMenu()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
             </div>
             <nav class="space-y-3 font-bold text-sm">
-                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('all'); })" class="w-full text-right py-3 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">📋 الرئيسية وكل المنتجات</button>
-                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('ملابس'); })" class="w-full text-right py-3 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">👕 قسم الملابس</button>
-                <button onclick="toggleMenu(); triggerLoading(() => { goHome(); filterCategory('إكسسوارات'); })" class="w-full text-right py-3 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">⌚ قسم الإكسسوارات</button>
-                <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="block py-3 px-3 rounded-lg text-[#febd69] hover:bg-[#232f3e] transition">📘 تابعنا على فيسبوك</a>
+                <button onclick="closeMenu(); triggerLoading(() => { goHome(); filterCategory('all'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">📋 الرئيسية وكل المنتجات</button>
+                <button onclick="closeMenu(); triggerLoading(() => { goHome(); filterCategory('ملابس'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">👕 قسم الملابس</button>
+                <button onclick="closeMenu(); triggerLoading(() => { goHome(); filterCategory('أحذية'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">👟 قسم الأحذية</button>
+                <button onclick="closeMenu(); triggerLoading(() => { goHome(); filterCategory('إكسسوارات'); })" class="w-full text-right py-2.5 px-3 rounded-lg hover:bg-[#232f3e] hover:text-[#febd69] transition">⌚ قسم الإكسسوارات</button>
+                <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="block py-2.5 px-3 rounded-lg text-[#febd69] hover:bg-[#232f3e] transition">📘 تابعنا على فيسبوك</a>
             </nav>
         </div>
         <div class="text-xs text-center text-gray-500 border-t border-gray-800 pt-3">
@@ -112,17 +138,30 @@
     <div id="admin-secret-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3">
         <div class="custom-card w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center p-4 bg-gray-900 text-white border-b border-gray-800">
-                <h3 class="font-bold text-sm text-amber-400">⚙️ لوحة التحكم والإعدادات (خاصة بك وحدك)</h3>
+                <h3 class="font-bold text-sm text-amber-400">⚙️ لوحة التحكم وإعدادات المالك</h3>
                 <button onclick="closeSecretModal()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
             </div>
             <div class="p-5 overflow-y-auto space-y-4 text-xs">
+                
+                <!-- إدارة صورة بروفايل المالك -->
+                <div class="inner-box p-3 rounded-xl border">
+                    <h4 class="font-bold text-sm text-amber-500 mb-2">🖼️ تغيير صورة بروفايل المالك (تظهر بالهيدر):</h4>
+                    <div class="flex items-center gap-3">
+                        <input type="file" id="owner-avatar-file" accept="image/*" class="w-full p-1 text-[10px] border rounded bg-white dark:bg-gray-800">
+                        <button onclick="uploadOwnerAvatar()" class="bg-blue-600 text-white px-3 py-1.5 rounded font-bold shrink-0">حفظ</button>
+                        <button onclick="deleteOwnerAvatar()" class="bg-red-600 text-white px-3 py-1.5 rounded font-bold shrink-0">مسح</button>
+                    </div>
+                </div>
+
+                <!-- نموذج إضافة منتج جديد -->
                 <div class="inner-box p-3 rounded-xl border">
                     <h4 class="font-bold text-sm text-amber-500 mb-3">➕ إضافة منتج جديد:</h4>
                     <div class="space-y-2">
                         <input type="text" id="new-name" placeholder="اسم المنتج" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
                         <input type="number" id="new-price" placeholder="السعر (ج.م)" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-                        <select id="new-category" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                        <select id="new-category" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-bold">
                             <option value="ملابس">ملابس</option>
+                            <option value="أحذية">أحذية 👟</option>
                             <option value="إكسسوارات">إكسسوارات</option>
                         </select>
 
@@ -145,18 +184,19 @@
 
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
         <!-- شريط البحث -->
-        <div id="home-search-section" class="mb-4 max-w-xl mx-auto">
+        <div id="home-search-section" class="mb-5 max-w-xl mx-auto">
             <div class="flex shadow-sm rounded-lg overflow-hidden border custom-card">
                 <input type="text" id="search-input" oninput="searchProducts()" placeholder="ابحث عن منتجك المفضلة هنا..." class="w-full py-2.5 px-4 bg-transparent text-sm focus:outline-none">
                 <button onclick="searchProducts()" class="bg-[#febd69] text-gray-950 px-5 font-black text-sm flex items-center justify-center transition">🔍 بحث</button>
             </div>
         </div>
 
-        <!-- الأزرار السريعة -->
-        <div class="flex justify-center gap-2 mb-6">
-            <button onclick="triggerLoading(() => filterSpecial('best'))" class="bg-[#febd69] hover:bg-[#f3a847] text-gray-950 px-4 py-2 rounded-lg font-black text-xs shadow transition flex items-center gap-1">🔥 الأكثر مبيعاً</button>
-            <button onclick="triggerLoading(() => filterSpecial('new'))" class="bg-[#232f3e] hover:bg-[#374151] text-amber-400 px-4 py-2 rounded-lg font-black text-xs shadow transition flex items-center gap-1">✨ وصل حديثاً</button>
-            <button onclick="triggerLoading(() => filterCategory('all'))" class="inner-box border px-4 py-2 rounded-lg font-bold text-xs shadow transition">📋 كل المنتجات</button>
+        <!-- الأزرار السريعة مع شريط برتقالي سفلي للزر النشط -->
+        <div class="flex flex-wrap justify-center gap-3 mb-6 border-b border-gray-200 dark:border-gray-800 pb-3">
+            <button id="tab-all" onclick="triggerLoading(() => { currentTab = 'all'; filterCategory('all'); })" class="tab-btn active-tab font-black text-xs sm:text-sm px-3 py-1">📋 كل المنتجات</button>
+            <button id="tab-best" onclick="triggerLoading(() => { currentTab = 'best'; filterSpecial('best'); })" class="tab-btn font-black text-xs sm:text-sm px-3 py-1">🔥 الأكثر مبيعاً</button>
+            <button id="tab-new" onclick="triggerLoading(() => { currentTab = 'new'; filterSpecial('new'); })" class="tab-btn font-black text-xs sm:text-sm px-3 py-1">✨ وصل حديثاً</button>
+            <button id="tab-shoes" onclick="triggerLoading(() => { currentTab = 'shoes'; filterCategory('أحذية'); })" class="tab-btn font-black text-xs sm:text-sm px-3 py-1">👟 قسم الأحذية</button>
         </div>
 
         <div class="flex justify-between items-center mb-4 border-b border-gray-300 dark:border-gray-800 pb-2">
@@ -275,21 +315,54 @@
 
         let defaultProducts = [
             { id: "1", name: "تيشيرت أوفر سايز قطن فخم", price: 450, category: "ملابس", image1: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500", image2: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500", desc: "تيشيرت عالي الجودة مصنوع من القطن الخالص 100%.", tag: "best" },
-            { id: "2", name: "ساعة يد رجالية كلاسيكية", price: 1200, category: "إكسسوارات", image1: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=500", image2: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500", desc: "ساعة يد أنيقة بتصميم عصري.", tag: "new" }
+            { id: "2", name: "حذاء رياضي عصري مريح", price: 850, category: "أحذية", image1: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500", image2: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500", desc: "كوتشي رياضي فخم ومريح جداً للمشي والجري.", tag: "new" }
         ];
 
         let products = [];
         let cart = [];
         let currentCategory = 'all';
+        let currentTab = 'all';
         let currentModalProductId = null;
         let currentModalQty = 1;
         let logoClickCount = 0;
         let logoClickTimer = null;
 
-        // تحميل الثيم الخاص بالعميل (مستقل لكل متصفح)
+        // إدارة زر الرجوع في الموبايل لجميع القوائم والنوافذ
+        window.addEventListener('popstate', function(e) {
+            closeAllModals(false);
+        });
+
+        function pushModalState(modalName) {
+            history.pushState({ modal: modalName }, "");
+        }
+
+        function closeAllModals(shouldGoBack = true) {
+            let isAnyOpen = false;
+            
+            const sideMenu = document.getElementById('side-menu');
+            if (!sideMenu.classList.contains('translate-x-full')) {
+                sideMenu.classList.add('translate-x-full');
+                isAnyOpen = true;
+            }
+
+            const modals = ['cart-modal', 'product-modal', 'zoom-modal', 'admin-secret-modal'];
+            modals.forEach(mId => {
+                const el = document.getElementById(mId);
+                if (el && !el.classList.contains('hidden')) {
+                    el.classList.add('hidden');
+                    isAnyOpen = true;
+                }
+            });
+
+            if (shouldGoBack && isAnyOpen && history.state && history.state.modal) {
+                history.back();
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
             const savedTheme = localStorage.getItem('store_theme') || 'light';
             applyTheme(savedTheme);
+            loadOwnerAvatar();
         });
 
         function toggleTheme() {
@@ -304,6 +377,40 @@
             const btn = document.getElementById('theme-toggle-btn');
             if(btn) {
                 btn.innerHTML = theme === 'light' ? '🌙 الوضع الداكن' : '☀️ الوضع الفاتح';
+            }
+        }
+
+        // تحكم صورة بروفايل المالك من فايبربيز
+        function loadOwnerAvatar() {
+            db.collection("settings").doc("owner_profile").onSnapshot((doc) => {
+                if (doc.exists && doc.data().avatarUrl) {
+                    document.getElementById('owner-avatar-img').src = doc.data().avatarUrl;
+                    document.getElementById('owner-avatar-img').classList.remove('hidden');
+                    document.getElementById('owner-avatar-placeholder').classList.add('hidden');
+                } else {
+                    document.getElementById('owner-avatar-img').classList.add('hidden');
+                    document.getElementById('owner-avatar-placeholder').classList.remove('hidden');
+                }
+            });
+        }
+
+        function uploadOwnerAvatar() {
+            const file = document.getElementById('owner-avatar-file').files[0];
+            if (!file) return alert('الرجاء اختيار صورة أولاً!');
+            triggerLoading();
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                db.collection("settings").doc("owner_profile").set({ avatarUrl: e.target.result })
+                .then(() => alert('تم تحديث صورة البروفايل بنجاح!'))
+                .catch(() => alert('حدث خطأ أثناء الحفظ!'));
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function deleteOwnerAvatar() {
+            if (confirm('هل أنت متأكد من حذف صورة البروفايل؟')) {
+                db.collection("settings").doc("owner_profile").delete()
+                .then(() => alert('تم حذف الصورة!'));
             }
         }
 
@@ -329,11 +436,19 @@
         }
 
         function toggleMenu() {
-            const menu = document.getElementById('side-menu');
-            if (menu) menu.classList.toggle('translate-x-full');
+            const sideMenu = document.getElementById('side-menu');
+            if (sideMenu.classList.contains('translate-x-full')) {
+                sideMenu.classList.remove('translate-x-full');
+                pushModalState('side-menu');
+            } else {
+                closeMenu();
+            }
         }
 
-        // لوحة الأدمن السرية (الضغط 3 مرات على اللوجو وإدخال الباسورد 1695)
+        function closeMenu() {
+            closeAllModals();
+        }
+
         function handleSecretAdminClick() {
             logoClickCount++;
             clearTimeout(logoClickTimer);
@@ -342,6 +457,7 @@
                 let pass = prompt("أدخل كلمة مرور الأدمن السرية:");
                 if (pass === ADMIN_PASSWORD) {
                     document.getElementById('admin-secret-modal').classList.remove('hidden');
+                    pushModalState('admin-modal');
                 } else if (pass !== null) {
                     alert("كلمة المرور غير صحيحة!");
                 }
@@ -350,7 +466,7 @@
             }
         }
 
-        function closeSecretModal() { document.getElementById('admin-secret-modal').classList.add('hidden'); }
+        function closeSecretModal() { closeAllModals(); }
 
         function showToast() {
             const toast = document.getElementById('toast-notification');
@@ -359,16 +475,28 @@
             setTimeout(() => { toast.classList.remove('show'); }, 2000);
         }
 
+        function updateTabUI(activeId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active-tab'));
+            const activeBtn = document.getElementById(activeId);
+            if(activeBtn) activeBtn.classList.add('active-tab');
+        }
+
         function goHome() {
             currentCategory = 'all';
+            currentTab = 'all';
             document.getElementById('section-title').innerText = 'جميع المنتجات المعروضة';
             document.getElementById('search-input').value = '';
+            updateTabUI('tab-all');
             renderStore();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function filterCategory(cat) {
             currentCategory = cat;
+            if (cat === 'all') updateTabUI('tab-all');
+            else if (cat === 'أحذية') updateTabUI('tab-shoes');
+            else updateTabUI('');
+            
             document.getElementById('section-title').innerText = cat === 'all' ? 'جميع المنتجات المعروضة' : `قسم: ${cat}`;
             renderStore();
         }
@@ -377,6 +505,10 @@
             const grid = document.getElementById('products-grid');
             if (!grid) return;
             grid.innerHTML = '';
+            
+            if (type === 'best') updateTabUI('tab-best');
+            if (type === 'new') updateTabUI('tab-new');
+
             let filtered = type === 'best' ? products.filter(p => p.tag === 'best') : products.filter(p => p.tag === 'new');
             document.getElementById('section-title').innerText = type === 'best' ? '🔥 المنتجات الأكثر مبيعاً' : '✨ المنتجات التي وصلت حديثاً';
             document.getElementById('products-count').innerText = filtered.length + ' منتج';
@@ -479,6 +611,7 @@
             document.getElementById('modal-buy-btn').setAttribute('onclick', `triggerLoading(() => { modalBuyNow(); closeProductModal(); });`);
 
             document.getElementById('product-modal').classList.remove('hidden');
+            pushModalState('product-modal');
         }
 
         function switchModalImage(src, num) {
@@ -497,10 +630,11 @@
             const currentSrc = document.getElementById('main-modal-img').src;
             document.getElementById('zoomed-image').src = currentSrc;
             document.getElementById('zoom-modal').classList.remove('hidden');
+            pushModalState('zoom-modal');
         }
 
-        function closeZoomModal() { document.getElementById('zoom-modal').classList.add('hidden'); }
-        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
+        function closeZoomModal() { closeAllModals(); }
+        function closeProductModal() { closeAllModals(); }
 
         function changeModalQty(val) {
             currentModalQty += val;
@@ -679,8 +813,13 @@
         }
 
         function removeFromCart(index) { cart.splice(index, 1); updateCartUI(); }
-        function openCart() { document.getElementById('cart-modal').classList.remove('hidden'); }
-        function closeCart() { document.getElementById('cart-modal').classList.add('hidden'); }
+        
+        function openCart() {
+            document.getElementById('cart-modal').classList.remove('hidden');
+            pushModalState('cart-modal');
+        }
+        
+        function closeCart() { closeAllModals(); }
 
         function checkoutWhatsApp() {
             if(cart.length === 0) { alert('السلة فارغة!'); return; }
