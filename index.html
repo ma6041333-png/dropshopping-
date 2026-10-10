@@ -47,7 +47,7 @@
             transition: opacity 0.2s ease; opacity: 0; pointer-events: none;
         }
         #loading-overlay.active { opacity: 1; pointer-events: auto; }
-        .spinner { width: 38px; height: 38px; border: 4px solid #f3f3f3; border-top: 4px solid #febd69; border-radius: 50%; animation: spin 0.6s linear infinite; }
+        .spinner { width: 38px; height: 38px; border: 4px solid #f3f3f3; border-top: 4px solid #febd69; border-radius: 50%; animation: spin 0.5s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         #toast-notification {
@@ -74,7 +74,6 @@
     <header class="header-bg sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <!-- فتح القائمة فوراً بدون أي تحميل -->
                 <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1 transition">☰</button>
                 
                 <div class="flex items-center gap-2.5 cursor-pointer select-none" onclick="handleSecretAdminClick()">
@@ -90,7 +89,7 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <button onclick="openCart()" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-4 py-2 rounded-md text-[#febd69] font-bold transition shadow">
+                <button onclick="triggerLoading(openCart)" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-4 py-2 rounded-md text-[#febd69] font-bold transition shadow">
                     🛒 <span id="cart-count" class="bg-[#febd69] text-gray-950 text-xs px-1.5 py-0.2 rounded-full font-black">0</span>
                 </button>
             </div>
@@ -117,12 +116,11 @@
             </nav>
         </div>
         
-        <!-- وسائل التواصل بأسفل القائمة الجانبية -->
         <div class="border-t border-gray-800 pt-3 text-center space-y-2">
             <div class="flex justify-center items-center gap-3 text-xs">
                 <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="text-amber-400 hover:underline font-bold">📘 فيسبوك</a>
                 <span class="text-gray-600">•</span>
-                <a id="telegram-link-menu" href="#" target="_blank" class="text-sky-400 hover:underline font-bold">✈️ تليجرام</a>
+                <a href="https://t.me/201550795100" target="_blank" class="text-sky-400 hover:underline font-bold">✈️ تليجرام</a>
             </div>
             <p class="text-[10px] text-gray-500">DROP SHOPPING © 2026</p>
         </div>
@@ -146,10 +144,13 @@
                 </div>
 
                 <div class="inner-box p-3 rounded-xl border">
-                    <h4 class="font-bold text-sm text-amber-500 mb-3">➕ إضافة منتج جديد:</h4>
+                    <h4 class="font-bold text-sm text-amber-500 mb-3">➕ إضافة منتج جديد (مع نسبة الخصم):</h4>
                     <div class="space-y-2">
                         <input type="text" id="new-name" placeholder="اسم المنتج" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-                        <input type="number" id="new-price" placeholder="السعر (ج.م)" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="new-price" placeholder="السعر الأساسي (ج.م)" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                            <input type="number" id="new-discount" placeholder="نسبة الخصم % (اختياري مثل 10)" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                        </div>
                         <select id="new-category" class="w-full p-2 rounded border text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-bold">
                             <option value="ملابس">ملابس</option>
                             <option value="أحذية">أحذية 👟</option>
@@ -165,7 +166,6 @@
                     </div>
                 </div>
 
-                <!-- إظهار صور المنتجات بالداخل لسهولة التمييز -->
                 <div class="inner-box p-3 rounded-xl border">
                     <h4 class="font-bold text-sm text-amber-500 mb-2">📋 المنتجات الحالية (للحذف):</h4>
                     <div id="admin-products-list" class="space-y-2 max-h-56 overflow-y-auto"></div>
@@ -175,7 +175,6 @@
     </div>
 
     <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full">
-        <!-- شريط البحث -->
         <div id="home-search-section" class="mb-5 max-w-xl mx-auto">
             <div class="flex shadow-sm rounded-lg overflow-hidden border custom-card">
                 <input type="text" id="search-input" oninput="searchProducts()" placeholder="ابحث عن منتجك المفضلة هنا..." class="w-full py-2.5 px-4 bg-transparent text-sm focus:outline-none">
@@ -183,7 +182,6 @@
             </div>
         </div>
 
-        <!-- أزرار الفلترة الفورية -->
         <div class="flex justify-center gap-6 mb-6 border-b border-gray-200 dark:border-gray-800 pb-3">
             <button id="tab-all" onclick="filterCategory('all');" class="tab-btn active-tab font-black text-xs sm:text-sm px-2 py-1">📋 كل المنتجات</button>
             <button id="tab-best" onclick="filterSpecial('best');" class="tab-btn font-black text-xs sm:text-sm px-2 py-1">🔥 الأكثر مبيعاً</button>
@@ -221,7 +219,11 @@
                 <div class="flex flex-col justify-between">
                     <div>
                         <h4 id="modal-name" class="font-bold text-lg mb-1"></h4>
-                        <p id="modal-price" class="text-[#b12704] font-black text-2xl mb-3"></p>
+                        <div class="flex items-center gap-2 mb-3">
+                            <p id="modal-price" class="text-[#b12704] font-black text-2xl"></p>
+                            <p id="modal-old-price" class="text-gray-400 line-through text-sm font-bold hidden"></p>
+                            <span id="modal-discount-badge" class="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold hidden"></span>
+                        </div>
                         <p class="text-xs text-gray-500 font-bold mb-1">عن المنتج:</p>
                         <p id="modal-desc" class="text-xs p-3 rounded-xl border inner-box mb-4 leading-relaxed"></p>
                     </div>
@@ -269,12 +271,12 @@
                     <span id="cart-total" class="text-[#b12704]">0 ج.م</span>
                 </div>
 
-                <button onclick="openCheckoutPage()" class="w-full bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-3.5 rounded-xl font-black text-sm shadow transition text-center">الذهاب لإتمام الطلب والشراء 📦</button>
+                <button onclick="triggerLoading(openCheckoutPage)" class="w-full bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-3.5 rounded-xl font-black text-sm shadow transition text-center">الذهاب لإتمام الطلب والشراء 📦</button>
             </div>
         </div>
     </div>
 
-    <!-- صفحة الشراء وإتمام الطلب المنفصلة (مع خيارات واتساب وتليجرام ومناظر) -->
+    <!-- صفحة الشراء وإتمام الطلب المنفصلة -->
     <div id="checkout-modal" class="fixed inset-0 bg-black/75 backdrop-blur-md hidden z-50 flex items-center justify-center p-3 overflow-y-auto">
         <div class="custom-card w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col my-auto border border-amber-400/30">
             <div class="flex justify-between items-center p-4 bg-gray-900 text-white border-b border-gray-800">
@@ -287,11 +289,15 @@
 
             <div class="p-5 space-y-4 text-xs overflow-y-auto max-h-[80vh]">
                 <div class="inner-box p-3.5 rounded-xl border space-y-2">
-                    <h4 class="font-black text-amber-500 mb-2">📋 ملخص المشتريات:</h4>
+                    <h4 class="font-black text-amber-500 mb-2">📋 ملخص الفاتورة:</h4>
                     <div id="checkout-summary-items" class="space-y-2 max-h-32 overflow-y-auto border-b pb-2"></div>
-                    <div class="flex justify-between items-center font-black text-sm pt-1">
-                        <span>إجمالي المشتريات:</span>
-                        <span id="checkout-summary-total" class="text-[#b12704]">0 ج.م</span>
+                    
+                    <div class="flex justify-between items-center font-black text-base pt-1">
+                        <div class="flex flex-col">
+                            <span>المبلغ الإجمالي المطلوب:</span>
+                            <span class="text-[10px] text-amber-500 font-normal mt-0.5">*(شامل مصاريف الشحن)*</span>
+                        </div>
+                        <span id="checkout-grand-total" class="text-[#b12704]">0 ج.م</span>
                     </div>
                 </div>
 
@@ -319,24 +325,16 @@
                     </div>
                 </div>
 
-                <!-- زراير الشراء السريعة والمنوعة -->
                 <div class="space-y-2 pt-1">
-                    <p class="font-bold text-center text-gray-400 text-[11px] mb-2">اختر وسيلة إرسال الطلب المفضلة لديك:</p>
+                    <p class="font-bold text-center text-gray-400 text-[11px] mb-2">اختر وسيلة إرسال الطلب:</p>
                     <button onclick="checkoutWhatsApp()" class="w-full bg-[#28a745] hover:bg-[#218838] text-white py-3 rounded-xl font-black text-xs shadow-lg transition flex items-center justify-center gap-2">
                         <span>إرسال الطلب عبر واتساب</span>
                         <span>📱</span>
                     </button>
-
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="checkoutTelegram()" class="bg-[#0088cc] hover:bg-[#0077b5] text-white py-2.5 rounded-xl font-bold text-xs shadow transition flex items-center justify-center gap-1.5">
-                            <span>تليجرام</span>
-                            <span>✈️</span>
-                        </button>
-                        <button onclick="checkoutMessenger()" class="bg-[#0084ff] hover:bg-[#0073e6] text-white py-2.5 rounded-xl font-bold text-xs shadow transition flex items-center justify-center gap-1.5">
-                            <span>ماسنجر</span>
-                            <span>💬</span>
-                        </button>
-                    </div>
+                    <button onclick="checkoutTelegram()" class="w-full bg-[#0088cc] hover:bg-[#0077b5] text-white py-3 rounded-xl font-black text-xs shadow-lg transition flex items-center justify-center gap-2">
+                        <span>إرسال الطلب عبر تليجرام (01550795100)</span>
+                        <span>✈️</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -350,10 +348,8 @@
     <script>
         const ADMIN_PASSWORD = "1695";
         const WHATSAPP_PHONE = "201550795100";
-        
-        // ضع معرّفك أو لينكات التواصل الخاصة بك هنا بسهولة:
-        const TELEGRAM_USERNAME = "YourTelegramUsername"; 
-        const MESSENGER_USERNAME = "1Dgs3YPueM"; 
+        const TELEGRAM_PHONE = "201550795100"; 
+        const SHIPPING_FEE = 50; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyA6hqWuT6ttYSntde1qumisu6",
@@ -369,8 +365,8 @@
         const db = firebase.firestore();
 
         let defaultProducts = [
-            { id: "1", name: "تيشيرت أوفر سايز قطن فخم", price: 450, category: "ملابس", image1: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500", image2: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500", desc: "تيشيرت عالي الجودة مصنوع من القطن الخالص 100%.", tag: "best" },
-            { id: "2", name: "حذاء رياضي عصري مريح", price: 850, category: "أحذية", image1: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500", image2: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500", desc: "كوتشي رياضي فخم ومريح جداً للمشي والجري.", tag: "new" }
+            { id: "1", name: "تيشيرت أوفر سايز قطن فخم", price: 450, discount: 10, category: "ملابس", image1: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500", image2: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500", desc: "تيشيرت عالي الجودة مصنوع من القطن الخالص 100%.", tag: "best" },
+            { id: "2", name: "حذاء رياضي عصري مريح", price: 850, discount: 0, category: "أحذية", image1: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500", image2: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500", desc: "كوتشي رياضي فخم ومريح جداً للمشي والجري.", tag: "new" }
         ];
 
         let products = [];
@@ -416,12 +412,8 @@
             const savedTheme = localStorage.getItem('store_theme') || 'light';
             applyTheme(savedTheme);
             loadOwnerAvatar();
-            
-            const tgLinkMenu = document.getElementById('telegram-link-menu');
-            if(tgLinkMenu) tgLinkMenu.href = `https://t.me/${TELEGRAM_USERNAME}`;
         });
 
-        // دالة التحميل بسرعة نصف ثانية (500ms)
         function triggerLoading(action) {
             const overlay = document.getElementById('loading-overlay');
             if (overlay) overlay.classList.add('active');
@@ -495,7 +487,6 @@
             }
         });
 
-        // فتح القائمة الجانبية فوراً
         function toggleMenu() {
             const sideMenu = document.getElementById('side-menu');
             if (sideMenu.classList.contains('translate-x-full')) {
@@ -575,26 +566,7 @@
                 return;
             }
 
-            filtered.forEach(p => {
-                grid.innerHTML += `
-                    <div class="product-card custom-card overflow-hidden flex flex-col justify-between p-2.5 border">
-                        <div class="cursor-pointer" onclick="openProductModal('${p.id}')">
-                            <div class="h-36 sm:h-44 rounded-md mb-2 flex items-center justify-center p-1 inner-box border">
-                                <img src="${p.image1 || ''}" alt="${p.name || ''}" class="w-full h-full object-contain">
-                            </div>
-                            <span class="text-[9px] bg-blue-50 text-[#007185] border px-1.5 py-0.5 rounded font-bold">${p.category || 'عام'}</span>
-                            <h4 class="font-bold mt-1 mb-1 text-xs line-clamp-2">${p.name || ''}</h4>
-                        </div>
-                        <div>
-                            <p class="text-[#b12704] font-black text-sm mb-2">${p.price || 0} <span class="text-[10px]">ج.م</span></p>
-                            <div class="grid grid-cols-2 gap-1">
-                                <button onclick="triggerLoading(() => addToCartDirect('${p.id}'))" class="bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">🛒 أضف</button>
-                                <button onclick="triggerLoading(() => buyNowDirect('${p.id}'))" class="bg-[#ffd814] hover:bg-[#f7ca00] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">⚡ شراء</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
+            renderProductsList(filtered, grid);
         }
 
         function searchProducts() {
@@ -618,9 +590,41 @@
                 return;
             }
 
-            filtered.forEach(p => {
-                grid.innerHTML += `
-                    <div class="product-card custom-card overflow-hidden flex flex-col justify-between p-2.5 border">
+            renderProductsList(filtered, grid);
+            renderAdminTable();
+        }
+
+        function calculateFinalPrice(price, discount) {
+            let disc = Number(discount) || 0;
+            if (disc > 0 && disc <= 100) {
+                return Math.round(price - (price * disc / 100));
+            }
+            return Number(price);
+        }
+
+        function renderProductsList(listData, container) {
+            listData.forEach(p => {
+                let disc = Number(p.discount) || 0;
+                let finalPrice = calculateFinalPrice(p.price, disc);
+                
+                let priceHtml = '';
+                let badgeHtml = '';
+
+                if (disc > 0) {
+                    priceHtml = `
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[#b12704] font-black text-sm">${finalPrice} <span class="text-[10px]">ج.م</span></span>
+                            <span class="text-gray-400 line-through text-[11px]">${p.price}</span>
+                        </div>
+                    `;
+                    badgeHtml = `<span class="absolute top-2 right-2 bg-red-600 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold shadow">خصم ${disc}%</span>`;
+                } else {
+                    priceHtml = `<p class="text-[#b12704] font-black text-sm mb-2">${p.price || 0} <span class="text-[10px]">ج.م</span></p>`;
+                }
+
+                container.innerHTML += `
+                    <div class="product-card custom-card overflow-hidden flex flex-col justify-between p-2.5 border relative">
+                        ${badgeHtml}
                         <div class="cursor-pointer" onclick="openProductModal('${p.id}')">
                             <div class="h-36 sm:h-44 rounded-md mb-2 flex items-center justify-center p-1 inner-box border">
                                 <img src="${p.image1 || ''}" alt="${p.name || ''}" class="w-full h-full object-contain">
@@ -629,7 +633,7 @@
                             <h4 class="font-bold mt-1 mb-1 text-xs line-clamp-2">${p.name || ''}</h4>
                         </div>
                         <div>
-                            <p class="text-[#b12704] font-black text-sm mb-2">${p.price || 0} <span class="text-[10px]">ج.م</span></p>
+                            <div class="mb-2">${priceHtml}</div>
                             <div class="grid grid-cols-2 gap-1">
                                 <button onclick="triggerLoading(() => addToCartDirect('${p.id}'))" class="bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">🛒 أضف</button>
                                 <button onclick="triggerLoading(() => buyNowDirect('${p.id}'))" class="bg-[#ffd814] hover:bg-[#f7ca00] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">⚡ شراء</button>
@@ -638,7 +642,6 @@
                     </div>
                 `;
             });
-            renderAdminTable();
         }
 
         function openProductModal(id) {
@@ -651,8 +654,26 @@
 
             document.getElementById('modal-title').innerText = p.name;
             document.getElementById('modal-name').innerText = p.name;
-            document.getElementById('modal-price').innerText = p.price + ' ج.م';
             document.getElementById('modal-desc').innerText = p.desc || 'لا توجد تفاصيل إضافية متاحة.';
+            
+            let disc = Number(p.discount) || 0;
+            let finalPrice = calculateFinalPrice(p.price, disc);
+
+            const priceEl = document.getElementById('modal-price');
+            const oldPriceEl = document.getElementById('modal-old-price');
+            const badgeEl = document.getElementById('modal-discount-badge');
+
+            priceEl.innerText = finalPrice + ' ج.م';
+
+            if (disc > 0) {
+                oldPriceEl.innerText = p.price + ' ج.م';
+                oldPriceEl.classList.remove('hidden');
+                badgeEl.innerText = `خصم ${disc}%`;
+                badgeEl.classList.remove('hidden');
+            } else {
+                oldPriceEl.classList.add('hidden');
+                badgeEl.classList.add('hidden');
+            }
             
             const mainImg = document.getElementById('main-modal-img');
             const thumb1 = document.getElementById('thumb1');
@@ -702,6 +723,7 @@
         function addProduct() {
             const name = document.getElementById('new-name').value;
             const price = document.getElementById('new-price').value;
+            const discount = document.getElementById('new-discount').value || 0;
             const category = document.getElementById('new-category').value;
             const desc = document.getElementById('new-desc').value;
             const img1File = document.getElementById('image1-file').files[0];
@@ -718,24 +740,35 @@
                 if(img2File) {
                     const reader2 = new FileReader();
                     reader2.onload = function(e2) {
-                        saveNewProductToCloud(name, price, category, desc, img1Data, e2.target.result);
+                        saveNewProductToCloud(name, price, discount, category, desc, img1Data, e2.target.result);
                     };
                     reader2.readAsDataURL(img2File);
                 } else {
-                    saveNewProductToCloud(name, price, category, desc, img1Data, img1Data);
+                    saveNewProductToCloud(name, price, discount, category, desc, img1Data, img1Data);
                 }
             };
             reader1.readAsDataURL(img1File);
         }
 
-        async function saveNewProductToCloud(name, price, category, desc, img1, img2) {
+        async function saveNewProductToCloud(name, price, discount, category, desc, img1, img2) {
             const productId = String(Date.now());
-            const newP = { id: productId, name, price: Number(price), category, desc, image1: img1, image2: img2, tag: "new" };
+            const newP = { 
+                id: productId, 
+                name, 
+                price: Number(price), 
+                discount: Number(discount), 
+                category, 
+                desc, 
+                image1: img1, 
+                image2: img2, 
+                tag: "new" 
+            };
             
             try {
                 await db.collection("products").doc(productId).set(newP);
                 document.getElementById('new-name').value = '';
                 document.getElementById('new-price').value = '';
+                document.getElementById('new-discount').value = '';
                 document.getElementById('new-desc').value = '';
                 document.getElementById('image1-file').value = '';
                 document.getElementById('image2-file').value = '';
@@ -745,20 +778,24 @@
             }
         }
 
-        // إظهار صور المنتجات بداخل لوحة تحكم الإدارة لسهولة التمييز
         function renderAdminTable() {
             const list = document.getElementById('admin-products-list');
             if (!list) return;
             list.innerHTML = '';
             products.forEach(p => {
+                let disc = Number(p.discount) || 0;
+                let finalP = calculateFinalPrice(p.price, disc);
                 list.innerHTML += `
                     <div class="flex justify-between items-center inner-box p-2 rounded-lg border gap-2">
                         <div class="flex items-center gap-2">
                             <img src="${p.image1 || ''}" class="w-9 h-9 object-contain rounded border bg-white p-0.5 shrink-0">
-                            <span class="truncate w-28 sm:w-36 font-bold text-xs">${p.name}</span>
+                            <div>
+                                <span class="truncate w-28 sm:w-32 font-bold text-xs block">${p.name}</span>
+                                <span class="text-[10px] text-gray-400">الخصم: ${disc}%</span>
+                            </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="text-amber-500 font-black text-xs">${p.price} ج.م</span>
+                            <span class="text-amber-500 font-black text-xs">${finalP} ج.م</span>
                             <button onclick="deleteProductFromCloud('${p.id}')" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded-md text-[10px] font-bold transition shrink-0">حذف</button>
                         </div>
                     </div>
@@ -833,7 +870,8 @@
             }
 
             cart.forEach((item, index) => {
-                let itemTotal = item.product.price * item.quantity;
+                let unitPrice = calculateFinalPrice(item.product.price, item.product.discount);
+                let itemTotal = unitPrice * item.quantity;
                 grandTotal += itemTotal;
                 itemsContainer.innerHTML += `
                     <div class="flex justify-between items-center border-b pb-3 text-xs gap-3">
@@ -841,7 +879,7 @@
                             <img src="${item.product.image1 || ''}" class="w-16 h-16 rounded-lg object-contain border inner-box p-1">
                             <div>
                                 <p class="font-bold text-sm mb-1">${item.product.name || ''}</p>
-                                <p class="text-[#b12704] font-black text-sm">${item.product.price} ج.م × ${item.quantity}</p>
+                                <p class="text-[#b12704] font-black text-sm">${unitPrice} ج.م × ${item.quantity}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-1.5">
@@ -871,77 +909,9 @@
             
             const summaryContainer = document.getElementById('checkout-summary-items');
             summaryContainer.innerHTML = '';
-            let grandTotal = 0;
+            let productsTotal = 0;
 
             cart.forEach((item) => {
-                let itemTotal = item.product.price * item.quantity;
-                grandTotal += itemTotal;
-                summaryContainer.innerHTML += `
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="font-bold truncate w-48">• ${item.product.name} (×${item.quantity})</span>
-                        <span class="font-black text-[#b12704]">${item.product.price * item.quantity} ج.م</span>
-                    </div>
-                `;
-            });
-
-            document.getElementById('checkout-summary-total').innerText = grandTotal + ' ج.م';
-
-            document.getElementById('cart-modal').classList.add('hidden');
-            document.getElementById('checkout-modal').classList.remove('hidden');
-            pushModalState('checkout-modal');
-        }
-
-        function closeCheckoutPage() { closeAllModals(); }
-
-        function generateOrderText() {
-            const cName = document.getElementById('client-name').value.trim();
-            const cPhone = document.getElementById('client-phone').value.trim();
-            const cAddress = document.getElementById('client-address').value.trim();
-            const cLocation = document.getElementById('client-location').value.trim();
-
-            if(!cName || !cPhone || !cAddress) { 
-                alert('الرجاء إدخال الاسم ورقم الهاتف والعنوان التفصيلي أولاً!'); 
-                return null; 
-            }
-
-            let message = `🛒 *طلب جديد من متجر DROP SHOPPING*\n\n`;
-            message += `👤 *الاسم:* ${cName}\n📞 *الهاتف:* ${cPhone}\n📍 *العنوان:* ${cAddress}\n`;
-            if (cLocation) {
-                message += `🗺️ *رابط اللوكيشن:* ${cLocation}\n`;
-            }
-            message += `\n📦 *المنتجات المطلوبة:*\n`;
-
-            let grandTotal = 0;
-            cart.forEach((item, index) => {
-                let itemTotal = item.product.price * item.quantity;
-                message += `${index + 1}. ${item.product.name} (×${item.quantity}) - ${itemTotal} ج.م\n`;
-                grandTotal += itemTotal;
-            });
-
-            message += `\n💰 *الإجمالي الكلي:* ${grandTotal} ج.م`;
-            return message;
-        }
-
-        function checkoutWhatsApp() {
-            const message = generateOrderText();
-            if (message) {
-                window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`, '_blank');
-            }
-        }
-
-        function checkoutTelegram() {
-            const message = generateOrderText();
-            if (message) {
-                window.open(`https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(message)}`, '_blank');
-            }
-        }
-
-        function checkoutMessenger() {
-            const message = generateOrderText();
-            if (message) {
-                window.open(`https://m.me/${MESSENGER_USERNAME}?text=${encodeURIComponent(message)}`, '_blank');
-            }
-        }
-    </script>
-</body>
-</html>
+                let unitPrice = calculateFinalPrice(item.product.price, item.product.discount);
+                let itemTotal = unitPrice * item.quantity;
+                
