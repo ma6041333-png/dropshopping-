@@ -216,7 +216,7 @@
         const ADMIN_PASSWORD = "1695";
         const WHATSAPP_PHONE = "201550795100";
 
-        // إعدادات مشروعات Firebase السحابية الخاصة بك
+        // إعدادات مشروعك السحابي في فايبربيز
         const firebaseConfig = {
             apiKey: "AIzaSyA6hqWuT6ttYSntde1qumisu6",
             authDomain: "drobshopping-e5448.firebaseapp.com",
@@ -241,7 +241,6 @@
         let currentModalProductId = null;
         let currentModalQty = 1;
 
-        // جلب المنتجات الحية من قاعدة بيانات فيربيز السحابية فوراً
         db.collection("products").onSnapshot((snapshot) => {
             products = [];
             snapshot.forEach((doc) => {
