@@ -44,10 +44,10 @@
         #loading-overlay {
             position: fixed; inset: 0; background: rgba(19, 25, 33, 0.85); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;
-            transition: opacity 0.3s ease; opacity: 0; pointer-events: none;
+            transition: opacity 0.2s ease; opacity: 0; pointer-events: none;
         }
         #loading-overlay.active { opacity: 1; pointer-events: auto; }
-        .spinner { width: 42px; height: 42px; border: 4px solid #f3f3f3; border-top: 4px solid #febd69; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .spinner { width: 38px; height: 38px; border: 4px solid #f3f3f3; border-top: 4px solid #febd69; border-radius: 50%; animation: spin 0.6s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         #toast-notification {
@@ -62,10 +62,10 @@
 </head>
 <body class="light-theme flex flex-col min-h-screen">
 
-    <!-- شاشة التحميل (محددة لمدة 1 ثانية بالضبط) -->
+    <!-- شاشة التحميل (نصف ثانية = 500ms) -->
     <div id="loading-overlay">
-        <div class="spinner mb-3"></div>
-        <p id="loading-text" class="text-sm font-bold text-amber-400">جاري التحميل...</p>
+        <div class="spinner mb-2"></div>
+        <p id="loading-text" class="text-xs font-bold text-amber-400">جاري التحميل...</p>
     </div>
 
     <div id="toast-notification">✨ تمت إضافة المنتج إلى السلة بنجاح</div>
@@ -74,7 +74,8 @@
     <header class="header-bg sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
-                <button onclick="triggerLoading(toggleMenu)" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1 transition">☰</button>
+                <!-- فتح القائمة فوراً بدون أي تحميل -->
+                <button onclick="toggleMenu()" class="text-[#febd69] text-2xl font-bold focus:outline-none p-1 transition">☰</button>
                 
                 <div class="flex items-center gap-2.5 cursor-pointer select-none" onclick="handleSecretAdminClick()">
                     <div id="owner-avatar-container" class="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400 bg-gray-800 flex items-center justify-center shrink-0 shadow-lg">
@@ -89,7 +90,7 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <button onclick="triggerLoading(openCart)" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-4 py-2 rounded-md text-[#febd69] font-bold transition shadow">
+                <button onclick="openCart()" class="flex items-center gap-1.5 bg-[#232f3e] hover:bg-[#374151] border border-gray-700 px-4 py-2 rounded-md text-[#febd69] font-bold transition shadow">
                     🛒 <span id="cart-count" class="bg-[#febd69] text-gray-950 text-xs px-1.5 py-0.2 rounded-full font-black">0</span>
                 </button>
             </div>
@@ -104,7 +105,7 @@
                 <button onclick="closeMenu()" class="text-gray-400 font-bold text-lg hover:text-white">✕</button>
             </div>
             <nav class="space-y-3 font-bold text-sm">
-                <button onclick="closeMenu(); triggerLoading(() => toggleTheme())" class="w-full text-right py-2.5 px-3 rounded-lg bg-[#232f3e] text-amber-400 hover:bg-[#374151] transition flex items-center justify-between">
+                <button onclick="closeMenu(); toggleTheme();" class="w-full text-right py-2.5 px-3 rounded-lg bg-[#232f3e] text-amber-400 hover:bg-[#374151] transition flex items-center justify-between">
                     <span id="menu-theme-text">🌙 الوضع الداكن</span>
                     <span>⚡</span>
                 </button>
@@ -116,12 +117,14 @@
             </nav>
         </div>
         
-        <!-- كلمة تابعنا على فيسبوك صغيرة بأسفل القائمة -->
-        <div class="border-t border-gray-800 pt-3 text-center">
-            <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="inline-flex items-center gap-1.5 text-xs text-amber-400 hover:underline font-bold">
-                <span>📘 تابعنا على فيسبوك</span>
-            </a>
-            <p class="text-[10px] text-gray-500 mt-2">DROP SHOPPING © 2026</p>
+        <!-- وسائل التواصل بأسفل القائمة الجانبية -->
+        <div class="border-t border-gray-800 pt-3 text-center space-y-2">
+            <div class="flex justify-center items-center gap-3 text-xs">
+                <a href="https://www.facebook.com/share/1Dgs3YPueM/" target="_blank" class="text-amber-400 hover:underline font-bold">📘 فيسبوك</a>
+                <span class="text-gray-600">•</span>
+                <a id="telegram-link-menu" href="#" target="_blank" class="text-sky-400 hover:underline font-bold">✈️ تليجرام</a>
+            </div>
+            <p class="text-[10px] text-gray-500">DROP SHOPPING © 2026</p>
         </div>
     </div>
 
@@ -162,9 +165,10 @@
                     </div>
                 </div>
 
+                <!-- إظهار صور المنتجات بالداخل لسهولة التمييز -->
                 <div class="inner-box p-3 rounded-xl border">
                     <h4 class="font-bold text-sm text-amber-500 mb-2">📋 المنتجات الحالية (للحذف):</h4>
-                    <div id="admin-products-list" class="space-y-1.5 max-h-48 overflow-y-auto"></div>
+                    <div id="admin-products-list" class="space-y-2 max-h-56 overflow-y-auto"></div>
                 </div>
             </div>
         </div>
@@ -265,12 +269,12 @@
                     <span id="cart-total" class="text-[#b12704]">0 ج.م</span>
                 </div>
 
-                <button onclick="triggerLoading(openCheckoutPage)" class="w-full bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-3.5 rounded-xl font-black text-sm shadow transition text-center">الذهاب لإتمام الطلب والشراء 📦</button>
+                <button onclick="openCheckoutPage()" class="w-full bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-3.5 rounded-xl font-black text-sm shadow transition text-center">الذهاب لإتمام الطلب والشراء 📦</button>
             </div>
         </div>
     </div>
 
-    <!-- صفحة الشراء وإتمام الطلب المستقلة -->
+    <!-- صفحة الشراء وإتمام الطلب المنفصلة (مع خيارات واتساب وتليجرام ومناظر) -->
     <div id="checkout-modal" class="fixed inset-0 bg-black/75 backdrop-blur-md hidden z-50 flex items-center justify-center p-3 overflow-y-auto">
         <div class="custom-card w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col my-auto border border-amber-400/30">
             <div class="flex justify-between items-center p-4 bg-gray-900 text-white border-b border-gray-800">
@@ -315,10 +319,25 @@
                     </div>
                 </div>
 
-                <button onclick="checkoutWhatsApp()" class="w-full bg-[#28a745] hover:bg-[#218838] text-white py-3.5 rounded-xl font-black text-sm shadow-lg transition text-center flex items-center justify-center gap-2">
-                    <span>تأكيد وإرسال الطلب عبر الواتساب</span>
-                    <span>📱</span>
-                </button>
+                <!-- زراير الشراء السريعة والمنوعة -->
+                <div class="space-y-2 pt-1">
+                    <p class="font-bold text-center text-gray-400 text-[11px] mb-2">اختر وسيلة إرسال الطلب المفضلة لديك:</p>
+                    <button onclick="checkoutWhatsApp()" class="w-full bg-[#28a745] hover:bg-[#218838] text-white py-3 rounded-xl font-black text-xs shadow-lg transition flex items-center justify-center gap-2">
+                        <span>إرسال الطلب عبر واتساب</span>
+                        <span>📱</span>
+                    </button>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="checkoutTelegram()" class="bg-[#0088cc] hover:bg-[#0077b5] text-white py-2.5 rounded-xl font-bold text-xs shadow transition flex items-center justify-center gap-1.5">
+                            <span>تليجرام</span>
+                            <span>✈️</span>
+                        </button>
+                        <button onclick="checkoutMessenger()" class="bg-[#0084ff] hover:bg-[#0073e6] text-white py-2.5 rounded-xl font-bold text-xs shadow transition flex items-center justify-center gap-1.5">
+                            <span>ماسنجر</span>
+                            <span>💬</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -331,6 +350,10 @@
     <script>
         const ADMIN_PASSWORD = "1695";
         const WHATSAPP_PHONE = "201550795100";
+        
+        // ضع معرّفك أو لينكات التواصل الخاصة بك هنا بسهولة:
+        const TELEGRAM_USERNAME = "YourTelegramUsername"; 
+        const MESSENGER_USERNAME = "1Dgs3YPueM"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyA6hqWuT6ttYSntde1qumisu6",
@@ -393,16 +416,19 @@
             const savedTheme = localStorage.getItem('store_theme') || 'light';
             applyTheme(savedTheme);
             loadOwnerAvatar();
+            
+            const tgLinkMenu = document.getElementById('telegram-link-menu');
+            if(tgLinkMenu) tgLinkMenu.href = `https://t.me/${TELEGRAM_USERNAME}`;
         });
 
-        // تحكم دالة التحميل بمدة 1 ثانية (1000ms)
+        // دالة التحميل بسرعة نصف ثانية (500ms)
         function triggerLoading(action) {
             const overlay = document.getElementById('loading-overlay');
             if (overlay) overlay.classList.add('active');
             setTimeout(() => {
                 if (typeof action === 'function') action();
                 if (overlay) overlay.classList.remove('active');
-            }, 1000);
+            }, 500);
         }
 
         function toggleTheme() {
@@ -469,6 +495,7 @@
             }
         });
 
+        // فتح القائمة الجانبية فوراً
         function toggleMenu() {
             const sideMenu = document.getElementById('side-menu');
             if (sideMenu.classList.contains('translate-x-full')) {
@@ -488,10 +515,8 @@
                 logoClickCount = 0;
                 let pass = prompt("أدخل كلمة مرور الأدمن السرية:");
                 if (pass === ADMIN_PASSWORD) {
-                    triggerLoading(() => {
-                        document.getElementById('admin-secret-modal').classList.remove('hidden');
-                        pushModalState('admin-modal');
-                    });
+                    document.getElementById('admin-secret-modal').classList.remove('hidden');
+                    pushModalState('admin-modal');
                 } else if (pass !== null) {
                     alert("كلمة المرور غير صحيحة!");
                 }
@@ -553,7 +578,7 @@
             filtered.forEach(p => {
                 grid.innerHTML += `
                     <div class="product-card custom-card overflow-hidden flex flex-col justify-between p-2.5 border">
-                        <div class="cursor-pointer" onclick="triggerLoading(() => openProductModal('${p.id}'))">
+                        <div class="cursor-pointer" onclick="openProductModal('${p.id}')">
                             <div class="h-36 sm:h-44 rounded-md mb-2 flex items-center justify-center p-1 inner-box border">
                                 <img src="${p.image1 || ''}" alt="${p.name || ''}" class="w-full h-full object-contain">
                             </div>
@@ -563,8 +588,8 @@
                         <div>
                             <p class="text-[#b12704] font-black text-sm mb-2">${p.price || 0} <span class="text-[10px]">ج.م</span></p>
                             <div class="grid grid-cols-2 gap-1">
-                                <button onclick="addToCartDirect('${p.id}')" class="bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">🛒 أضف</button>
-                                <button onclick="buyNowDirect('${p.id}')" class="bg-[#ffd814] hover:bg-[#f7ca00] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">⚡ شراء</button>
+                                <button onclick="triggerLoading(() => addToCartDirect('${p.id}'))" class="bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">🛒 أضف</button>
+                                <button onclick="triggerLoading(() => buyNowDirect('${p.id}'))" class="bg-[#ffd814] hover:bg-[#f7ca00] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">⚡ شراء</button>
                             </div>
                         </div>
                     </div>
@@ -596,7 +621,7 @@
             filtered.forEach(p => {
                 grid.innerHTML += `
                     <div class="product-card custom-card overflow-hidden flex flex-col justify-between p-2.5 border">
-                        <div class="cursor-pointer" onclick="triggerLoading(() => openProductModal('${p.id}'))">
+                        <div class="cursor-pointer" onclick="openProductModal('${p.id}')">
                             <div class="h-36 sm:h-44 rounded-md mb-2 flex items-center justify-center p-1 inner-box border">
                                 <img src="${p.image1 || ''}" alt="${p.name || ''}" class="w-full h-full object-contain">
                             </div>
@@ -606,8 +631,8 @@
                         <div>
                             <p class="text-[#b12704] font-black text-sm mb-2">${p.price || 0} <span class="text-[10px]">ج.م</span></p>
                             <div class="grid grid-cols-2 gap-1">
-                                <button onclick="addToCartDirect('${p.id}')" class="bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">🛒 أضف</button>
-                                <button onclick="buyNowDirect('${p.id}')" class="bg-[#ffd814] hover:bg-[#f7ca00] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">⚡ شراء</button>
+                                <button onclick="triggerLoading(() => addToCartDirect('${p.id}'))" class="bg-[#ffa41c] hover:bg-[#fa8900] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">🛒 أضف</button>
+                                <button onclick="triggerLoading(() => buyNowDirect('${p.id}'))" class="bg-[#ffd814] hover:bg-[#f7ca00] text-gray-950 py-1.5 rounded-md text-[10px] font-black transition">⚡ شراء</button>
                             </div>
                         </div>
                     </div>
@@ -639,8 +664,8 @@
 
             switchModalImage(p.image1, 1);
 
-            document.getElementById('modal-cart-btn').setAttribute('onclick', `addModalToCart(); closeProductModal();`);
-            document.getElementById('modal-buy-btn').setAttribute('onclick', `modalBuyNow();`);
+            document.getElementById('modal-cart-btn').setAttribute('onclick', `triggerLoading(() => { addModalToCart(); closeProductModal(); });`);
+            document.getElementById('modal-buy-btn').setAttribute('onclick', `triggerLoading(() => modalBuyNow());`);
 
             document.getElementById('product-modal').classList.remove('hidden');
             pushModalState('product-modal');
@@ -720,16 +745,22 @@
             }
         }
 
+        // إظهار صور المنتجات بداخل لوحة تحكم الإدارة لسهولة التمييز
         function renderAdminTable() {
             const list = document.getElementById('admin-products-list');
             if (!list) return;
             list.innerHTML = '';
             products.forEach(p => {
                 list.innerHTML += `
-                    <div class="flex justify-between items-center inner-box p-2 rounded border">
-                        <span class="truncate w-32 font-bold">${p.name}</span>
-                        <span class="text-amber-500 font-black">${p.price} ج.م</span>
-                        <button onclick="deleteProductFromCloud('${p.id}')" class="bg-red-600 text-white px-2 py-0.5 rounded text-[10px] font-bold">حذف</button>
+                    <div class="flex justify-between items-center inner-box p-2 rounded-lg border gap-2">
+                        <div class="flex items-center gap-2">
+                            <img src="${p.image1 || ''}" class="w-9 h-9 object-contain rounded border bg-white p-0.5 shrink-0">
+                            <span class="truncate w-28 sm:w-36 font-bold text-xs">${p.name}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-amber-500 font-black text-xs">${p.price} ج.م</span>
+                            <button onclick="deleteProductFromCloud('${p.id}')" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded-md text-[10px] font-bold transition shrink-0">حذف</button>
+                        </div>
                     </div>
                 `;
             });
@@ -759,9 +790,7 @@
 
         function buyNowDirect(id) {
             addToCartDirect(id);
-            triggerLoading(() => {
-                openCheckoutPage();
-            });
+            openCheckoutPage();
         }
 
         function addModalToCart() {
@@ -778,9 +807,7 @@
         function modalBuyNow() {
             addModalToCart();
             closeProductModal();
-            triggerLoading(() => {
-                openCheckoutPage();
-            });
+            openCheckoutPage();
         }
 
         function increaseQty(index) { cart[index].quantity += 1; updateCartUI(); }
@@ -839,7 +866,6 @@
         
         function closeCart() { closeAllModals(); }
 
-        // فتح صفحة الشراء الشيك وإتمام الطلب بصورة صحيحة
         function openCheckoutPage() {
             if(cart.length === 0) { alert('السلة فارغة، أضف منتجات أولاً!'); return; }
             
@@ -860,7 +886,6 @@
 
             document.getElementById('checkout-summary-total').innerText = grandTotal + ' ج.م';
 
-            // إغلاق السلة وفتح صفحة الشراء المستقلة
             document.getElementById('cart-modal').classList.add('hidden');
             document.getElementById('checkout-modal').classList.remove('hidden');
             pushModalState('checkout-modal');
@@ -868,35 +893,8 @@
 
         function closeCheckoutPage() { closeAllModals(); }
 
-        function checkoutWhatsApp() {
-            if(cart.length === 0) { alert('السلة فارغة!'); return; }
+        function generateOrderText() {
             const cName = document.getElementById('client-name').value.trim();
             const cPhone = document.getElementById('client-phone').value.trim();
             const cAddress = document.getElementById('client-address').value.trim();
-            const cLocation = document.getElementById('client-location').value.trim();
-
-            if(!cName || !cPhone || !cAddress) { 
-                alert('الرجاء إدخال الاسم ورقم الهاتف والعنوان التفصيلي أولاً!'); 
-                return; 
-            }
-
-            let message = `🛒 *طلب جديد من متجر DROP SHOPPING*\n\n`;
-            message += `👤 *الاسم:* ${cName}\n📞 *الهاتف:* ${cPhone}\n📍 *العنوان:* ${cAddress}\n`;
-            if (cLocation) {
-                message += `🗺️ *رابط اللوكيشن:* ${cLocation}\n`;
-            }
-            message += `\n📦 *المنتجات المطلوبة:*\n`;
-
-            let grandTotal = 0;
-            cart.forEach((item, index) => {
-                let itemTotal = item.product.price * item.quantity;
-                message += `${index + 1}. ${item.product.name} (×${item.quantity}) - ${itemTotal} ج.م\n`;
-                grandTotal += itemTotal;
-            });
-
-            message += `\n💰 *الإجمالي الكلي:* ${grandTotal} ج.م`;
-            window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`, '_blank');
-        }
-    </script>
-</body>
-</html>
+          
