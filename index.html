@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DROP SHOPPING - المتجر الرسمي</title>
+    <!-- كود إثبات الملكية لـ Google Search Console -->
+    <meta name="google-site-verification" content="q0kfc7iiLj2Q5mgyORBqMmuuz7G2Z78RRJiLCb99uBY" />
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
     
@@ -20,7 +23,7 @@
         body.light-theme .inner-box { background: #f9fafb; border-color: #e5e7eb; color: #1f2937; }
 
         body.dark-theme { background-color: #0b0f15; color: #f3f4f6; }
-        body.dark-theme .custom-card { background: #131921; border-color: #1f2937; color: #f3f4f6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
+        body.dark-theme .custom-card { background: #131921; border-color: #1f3437; color: #f3f4f6; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
         body.dark-theme .header-bg { background: #0d1217; color: #ffffff; border-bottom: 1px solid rgba(254, 189, 105, 0.2); }
         body.dark-theme .inner-box { background: #1a222d; border-color: #2a3441; color: #f3f4f6; }
 
@@ -633,7 +636,6 @@
             renderProductsList(filtered, grid);
         }
 
-        // دالة البحث اللحظي مع محاكاة التحميل مع كل حرف
         function liveSearchProducts() {
             const overlay = document.getElementById('loading-overlay');
             if (overlay) overlay.classList.add('active');
@@ -643,7 +645,7 @@
                 const query = document.getElementById('search-input').value.toLowerCase().trim();
                 renderStore(query);
                 if (overlay) overlay.classList.remove('active');
-            }, 300); // تأخير بسيط 300 ملي ثانية لإعطاء تأثير البحث الذكي
+            }, 300);
         }
 
         function renderStore(searchQuery = '') {
@@ -1065,9 +1067,9 @@
         function openCheckoutPage() {
             if(cart.length === 0) { alert('السلة فارغة، أضف منتجات أولاً!'); return; }
             
+            let productsTotal = 0;
             const summaryContainer = document.getElementById('checkout-summary-items');
             summaryContainer.innerHTML = '';
-            let productsTotal = 0;
 
             cart.forEach((item) => {
                 let unitPrice = calculateFinalPrice(item.product.price, item.product.discount);
@@ -1082,7 +1084,6 @@
             });
 
             let finalGrandTotal = productsTotal + SHIPPING_FEE;
-
             document.getElementById('checkout-grand-total').innerText = finalGrandTotal + ' ج.م';
 
             document.getElementById('cart-modal').classList.add('hidden');
@@ -1125,7 +1126,7 @@
         }
 
         function checkoutWhatsApp() {
-            const message = generateOrderText();
+            const message = generateOrderTest();
             if (message) {
                 window.open(`https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`, '_blank');
             }
